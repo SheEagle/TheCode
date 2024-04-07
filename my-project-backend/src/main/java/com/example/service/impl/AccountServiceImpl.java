@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.entity.dto.Account;
 import com.example.entity.vo.request.ConfirmResetVO;
+import com.example.entity.vo.request.EmailModifyVO;
 import com.example.entity.vo.request.EmailRegisterVO;
 import com.example.entity.vo.request.EmailResetVO;
 import com.example.mapper.AccountMapper;
@@ -151,6 +152,27 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     @Override
     public Account findAccountById(int id) {
         return this.query().eq("id", id).one();
+    }
+
+    @Override
+    public String modifyEmail(int id, EmailModifyVO vo) {
+        String email = vo.getEmail();
+        String code = getEmailVerifyCode(email);
+
+        if (code == null)
+            return "请先获取验证码";
+        if (!code.equals(vo.getCode()))
+            return "验证码错误，请重新输入";
+        this.deleteEmailVerifyCode(email);
+        Account account = this.findAccountByNameOrEmail(email);
+        if (account != null && account.getId() != id)
+            return "该邮箱地址已被其他账号绑定，无法完成此操作！";
+        this.update()
+                .set("email", email)
+                .eq("id", id)
+                .update();
+
+        return null;
     }
 
     /**

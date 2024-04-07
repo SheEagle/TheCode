@@ -55,22 +55,32 @@ const loading = reactive({
 })
 
 function saveDetails() {
+  // 验证表单是否有效
   baseFormRef.value.validate(isValid => {
+    // 如果表单有效
     if (isValid) {
-      loading.base = true
+      // 设置加载状态为true，表示正在保存用户信息
+      loading.base = true;
+      // 发送 POST 请求保存用户信息
       post('/api/user/save-details', baseForm, () => {
-        console.log(baseForm)
-        ElMessage.success('用户信息保存成功')
-        store.user.usernamew = baseForm.username
-        introduction.value = baseForm.introduction
-        loading.base = false
+        // 保存成功后显示成功消息
+        ElMessage.success('用户信息保存成功');
+        // 更新 Vuex 中的用户名信息
+        store.user.usernamew = baseForm.username;
+        // 更新简介信息（如果有的话）
+        introduction.value = baseForm.introduction;
+        // 设置加载状态为false，表示保存完成
+        loading.base = false;
       }, (message) => {
-        ElMessage.warning(message)
-        loading.base = false
-      })
+        // 如果保存失败，显示警告消息
+        ElMessage.warning(message);
+        // 设置加载状态为false，表示保存完成
+        loading.base = false;
+      });
     }
-  })
+  });
 }
+
 
 get('/api/user/details', data => {
   baseForm.username = store.user.username
@@ -83,44 +93,68 @@ get('/api/user/details', data => {
   loading.form = false
 })
 
-const coldTime = ref(0)
-const isEmailValid = ref(true)
+// 定义一个响应式引用，用于存储冷却时间
+const coldTime = ref(0);
+
+// 定义一个响应式引用，表示邮箱是否有效，默认为 true
+const isEmailValid = ref(true);
+
+// 定义一个函数，用于在验证邮箱时更新邮箱是否有效的状态
 const onValidate = (prop, isValid) => {
+  // 如果验证属性为 'email'
   if (prop === 'email')
-    isEmailValid.value = isValid
+      // 更新邮箱有效状态为 isValid
+    isEmailValid.value = isValid;
 }
+
 
 function sendEmailCode() {
+  // 验证邮箱表单是否有效
   emailFormRef.value.validate(isValid => {
+    // 如果表单有效
     if (isValid) {
-      coldTime.value = 60
+      // 设置冷却时间为 60 秒
+      coldTime.value = 60;
+      // 发送请求获取验证码
       get(`/api/auth/ask-code?email=${emailForm.email}&type=modify`, () => {
-        ElMessage.success(`验证码已成功发送到邮箱：${emailForm.email}，请注意查收`)
+        // 显示成功消息，提示验证码已发送至邮箱
+        ElMessage.success(`验证码已成功发送到邮箱：${emailForm.email}，请注意查收`);
+        // 设置定时器，每秒减少冷却时间
         const handle = setInterval(() => {
-          coldTime.value--
+          coldTime.value--;
+          // 冷却时间倒计时完成时清除定时器
           if (coldTime.value === 0) {
-            clearInterval(handle)
+            clearInterval(handle);
           }
-        }, 1000)
+        }, 1000);
       }, (message) => {
-        ElMessage.warning(message)
-        coldTime.value = 0
-      })
+        // 如果请求失败，显示警告消息，并重置冷却时间为 0
+        ElMessage.warning(message);
+        coldTime.value = 0;
+      });
     }
-  })
+  });
 }
 
+
 function modifyEmail() {
+  // 验证邮箱表单是否有效
   emailFormRef.value.validate(isValid => {
+    // 如果表单有效
     if (isValid) {
+      // 发送请求修改邮箱地址
       post('/api/user/modify-email', emailForm, () => {
-        ElMessage.success('邮件修改成功')
-        store.user.email = emailForm.email
-        emailForm.code = ''
-      })
+        // 显示成功消息，提示邮件修改成功
+        ElMessage.success('邮件修改成功');
+        // 更新 Vuex 中的邮箱地址
+        store.user.email = emailForm.email;
+        // 清空验证码输入框
+        emailForm.code = '';
+      });
     }
-  })
+  });
 }
+
 
 function beforeAvatarUpload(rawFile) {
   if (rawFile.type !== 'image/jpeg' && rawFile.type !== 'image/png') {
