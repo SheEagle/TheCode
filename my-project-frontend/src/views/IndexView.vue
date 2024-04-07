@@ -57,7 +57,10 @@ function userLogout() {
     <div class="main-content" v-loading="loading" element-loading-text="正在进入，请稍后...">
       <el-container style="height: 100%" v-if="!loading">
         <el-header class="main-content-header">
-          <el-image class="logo" src="https://element-plus.org/images/element-plus-logo.svg"/>
+          <!--logo-->
+          <el-image class="logo" src="@/assets/logo.jfif"/>
+
+          <!--搜索栏-->
           <div style="flex: 1;padding: 0 20px;text-align: center">
             <el-input v-model="searchInput.text" style="width: 100%;max-width: 500px"
                       placeholder="搜索论坛相关内容...">
@@ -76,7 +79,10 @@ function userLogout() {
               </template>
             </el-input>
           </div>
+
+          <!--个人-->
           <div class="user-info">
+            <!--消息中心-->
             <el-popover placement="bottom" :width="350" trigger="click">
               <template #reference>
                 <el-badge style="margin-right: 15px" is-dot :hidden="!notification.length">
@@ -108,6 +114,8 @@ function userLogout() {
                 </el-button>
               </div>
             </el-popover>
+
+            <!--个人信息-->
             <div class="profile">
               <div>{{ store.user.username }}</div>
               <div>{{ store.user.email }}</div>
@@ -136,7 +144,10 @@ function userLogout() {
               </template>
             </el-dropdown>
           </div>
+
         </el-header>
+
+        <!--侧边栏-->
         <el-container>
           <el-aside width="230px">
             <el-scrollbar style="height: calc(100vh - 55px)">
@@ -145,6 +156,7 @@ function userLogout() {
                   :default-active="$route.path"
                   :default-openeds="['1', '2', '3']"
                   style="min-height: calc(100vh - 55px)">
+                <!--校园论坛-->
                 <el-sub-menu index="1">
                   <template #title>
                     <el-icon>
@@ -194,6 +206,8 @@ function userLogout() {
                     </template>
                   </el-menu-item>
                 </el-sub-menu>
+
+                <!--探索与发现-->
                 <el-sub-menu index="2">
                   <template #title>
                     <el-icon>
@@ -242,6 +256,8 @@ function userLogout() {
                     </template>
                   </el-menu-item>
                 </el-sub-menu>
+
+                <!--个人设置-->
                 <el-sub-menu index="3">
                   <template #title>
                     <el-icon>
@@ -269,6 +285,8 @@ function userLogout() {
               </el-menu>
             </el-scrollbar>
           </el-aside>
+
+          <!--主页面-->
           <el-main class="main-content-page">
             <el-scrollbar style="height: calc(100vh - 55px)">
               <router-view v-slot="{ Component }">
@@ -278,6 +296,7 @@ function userLogout() {
               </router-view>
             </el-scrollbar>
           </el-main>
+
         </el-container>
       </el-container>
     </div>
