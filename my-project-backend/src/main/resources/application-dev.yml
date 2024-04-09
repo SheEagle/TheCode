@@ -48,3 +48,5 @@ spring:
     endpoint: 'http://localhost:9999'
     username: 'minioadmin'
     password: 'minioadmin'
+  weather:
+    key: 47d29ad789c640c08a537200d9070ca7
