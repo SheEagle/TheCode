@@ -22,7 +22,7 @@ public class ObjectController {
     @Resource
     ImageService service;
 
-    @GetMapping("/images/avatar/**")
+    @GetMapping("/images/**")
     public void imageFetch(HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setHeader("Content-Type", "image/jpg");
         this.fetchImage(request, response);

@@ -77,6 +77,7 @@ function findTypeById(id) {
   }
 }
 
+
 // 提交帖子
 function submitTopic() {
   const text = deltaToText(editor.text);
@@ -102,54 +103,64 @@ Quill.register('modules/ImageExtend', ImageExtend);
 // 富文本编辑器的选项
 const editorOption = {
   modules: {
+    // 富文本编辑器的工具栏配置
     toolbar: {
       container: [
-        "bold", "italic", "underline", "strike", "clean",
-        {color: []}, {'background': []},
-        {size: ["small", false, "large", "huge"]},
-        {header: [1, 2, 3, 4, 5, 6, false]},
-        {list: "ordered"}, {list: "bullet"}, {align: []},
-        "blockquote", "code-block", "link", "image",
-        {indent: '-1'}, {indent: '+1'}
+        "bold", "italic", "underline", "strike", "clean",  // 加粗、斜体、下划线、删除线、清除格式
+        {color: []}, {'background': []},  // 文字颜色、背景颜色
+        {size: ["small", false, "large", "huge"]},  // 字号
+        {header: [1, 2, 3, 4, 5, 6, false]},  // 标题
+        {list: "ordered"}, {list: "bullet"}, {align: []},  // 有序列表、无序列表、对齐方式
+        "blockquote", "code-block", "link", "image",  // 引用、代码块、链接、插入图片
+        {indent: '-1'}, {indent: '+1'}  // 缩进
       ],
+      // 自定义工具栏按钮的事件处理函数
       handlers: {
         'image': function () {
-          QuillWatch.emit(this.quill.id);
+          QuillWatch.emit(this.quill.id);  // 触发插入图片事件
         }
       }
     },
+    // 图片缩放模块的配置
     imageResize: {
-      modules: ['Resize', 'DisplaySize']
+      modules: ['Resize', 'DisplaySize']  // 可调整大小、显示尺寸
     },
+    // 图片扩展模块的配置
     ImageExtend: {
-      action: axios.defaults.baseURL + '/api/image/cache',
-      name: 'file',
-      size: 5,
-      loading: true,
-      accept: 'image/png, image/jpeg',
+      action: axios.defaults.baseURL + '/api/image/cache',  // 图片上传接口地址
+      name: 'file',  // 文件字段名称
+      size: 5,  // 图片大小限制（单位：MB）
+      loading: true,  // 是否显示上传加载动画
+      accept: 'image/png, image/jpeg',  // 允许上传的图片格式
+      // 图片上传成功后的响应处理函数
       response: (resp) => {
         if (resp.data) {
-          return axios.defaults.baseURL + '/images' + resp.data;
+          return axios.defaults.baseURL + '/images' + resp.data;  // 返回图片地址
         } else {
-          return null;
+          return null;  // 返回空值
         }
       },
-      methods: 'POST',
+      methods: 'POST',  // 请求方法
+      // 请求头配置函数
       headers: xhr => {
-        xhr.setRequestHeader('Authorization', accessHeader().Authorization);
+        xhr.setRequestHeader('Authorization', accessHeader().Authorization);  // 设置 Authorization 头
       },
+      // 图片上传开始时的回调函数
       start: () => editor.uploading = true,
+      // 图片上传成功时的回调函数
       success: () => {
-        ElMessage.success('图片上传成功!');
-        editor.uploading = false;
+        ElMessage.success('图片上传成功!');  // 显示上传成功消息
+        editor.uploading = false;  // 设置上传状态为 false
       },
+      // 图片上传失败时的回调函数
       error: () => {
-        ElMessage.warning('图片上传失败，请联系管理员!');
-        editor.uploading = false;
+        ElMessage.warning('图片上传失败，请联系管理员!');  // 显示上传失败消息
+        editor.uploading = false;  // 设置上传状态为 false
       }
     }
   }
 };
+
 </script>
 
 <template>
@@ -161,6 +172,7 @@ const editorOption = {
                :close-on-click-modal="false"
                :size="650"
                @close="emit('close')">
+
       <!-- 头部标题 -->
       <template #header>
         <div>
@@ -168,6 +180,7 @@ const editorOption = {
           <div style="font-size: 13px">发表内容之前，请遵守相关法律法规，不要出现骂人等爆粗口的不文明行为。</div>
         </div>
       </template>
+
       <!-- 选择帖子类型和标题输入 -->
       <div style="display: flex;gap: 10px">
         <div style="width: 150px">
@@ -181,24 +194,28 @@ const editorOption = {
             </el-option>
           </el-select>
         </div>
+
         <div style="flex: 1">
           <el-input v-model="editor.title" placeholder="请输入帖子标题..." :prefix-icon="Document"
                     style="height: 100%" maxlength="30"/>
         </div>
       </div>
+
       <!-- 帖子类型描述 -->
       <div style="margin-top: 5px;font-size: 13px;color: grey">
         <color-dot :color="editor.type ? editor.type.color : '#dedede'"/>
-        <span style="margin-left: 5px">{{ editor.type ? editor.type.desc : '请在上方选择一个帖子类型' }}</span>
+        <span style="margin-left: 5px">{{ editor.type ? editor.type.description : '请在上方选择一个帖子类型' }}</span>
       </div>
+
       <!-- 富文本编辑器 -->
       <div style="margin-top: 10px;height: 440px;overflow: hidden;border-radius: 5px"
            v-loading="editor.uploading"
-           element-loading-text="这种上传图片，请稍后...">
+           element-loading-text="正在上传图片，请稍后...">
         <quill-editor v-model:content="editor.text" style="height: calc(100% - 45px)"
                       content-type="delta" ref="refEditor"
                       placeholder="今天想分享点什么呢？" :options="editorOption"/>
       </div>
+
       <!-- 字数统计和提交按钮 -->
       <div style="display: flex;justify-content: space-between;margin-top: 5px">
         <div style="color: grey;font-size: 13px">
@@ -208,6 +225,7 @@ const editorOption = {
           <el-button type="success" :icon="Check" @click="submitTopic" plain>{{ submitButton }}</el-button>
         </div>
       </div>
+
     </el-drawer>
   </div>
 </template>
