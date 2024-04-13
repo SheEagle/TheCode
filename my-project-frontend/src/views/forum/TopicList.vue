@@ -51,7 +51,7 @@ const today = computed(() => {
   return `${date.getFullYear()} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日`
 })
 
-// get('/api/forum/top-topic', data => topics.top = data)
+get('/api/forum/top-topic', data => topics.top = data)
 
 function updateList() {
   if (topics.end) return
