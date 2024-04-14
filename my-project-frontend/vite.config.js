@@ -8,6 +8,9 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    port: 7000 // 设置端口为8080
+  },
   plugins: [
     vue(),
     AutoImport({

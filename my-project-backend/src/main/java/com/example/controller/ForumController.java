@@ -3,10 +3,7 @@ package com.example.controller;
 import com.alibaba.fastjson2.JSONObject;
 import com.example.entity.RestBean;
 import com.example.entity.vo.request.TopicCreateVO;
-import com.example.entity.vo.response.TopicPreviewVO;
-import com.example.entity.vo.response.TopicTopVO;
-import com.example.entity.vo.response.TopicTypeVO;
-import com.example.entity.vo.response.WeatherVO;
+import com.example.entity.vo.response.*;
 import com.example.service.TopicService;
 import com.example.service.WeatherService;
 import com.example.utils.Const;
@@ -57,7 +54,7 @@ public class ForumController {
     @GetMapping("/list-topic")
     public RestBean<List<TopicPreviewVO>> listTopic(@RequestParam @Min(0) int page
             , @RequestParam @Min(0) int type) {
-        return RestBean.success(topicService.listTopicByPage(page, type));
+        return RestBean.success(topicService.listTopicByPage(page + 1, type));
 
     }
 
@@ -65,5 +62,12 @@ public class ForumController {
     public RestBean<List<TopicTopVO>> topTopic() {
         return RestBean.success(topicService.listTopTopics());
     }
+
+    @GetMapping("/topic")
+    public RestBean<TopicDetailsVO> topic(@RequestParam @Min(0) int tid) {
+        return RestBean.success(topicService.getTopic(tid));
+
+    }
+
 
 }

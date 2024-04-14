@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.entity.dto.TopicType;
 import com.example.entity.vo.request.TopicCreateVO;
+import com.example.entity.vo.response.TopicDetailsVO;
 import com.example.entity.vo.response.TopicPreviewVO;
 import com.example.entity.vo.response.TopicTopVO;
 
@@ -15,4 +16,5 @@ public interface TopicService {
     List<TopicPreviewVO> listTopicByPage(int page, int type);
 
     List<TopicTopVO> listTopTopics();
-}
+    TopicDetailsVO getTopic(int tid)
+;}
