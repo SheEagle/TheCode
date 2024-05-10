@@ -1,44 +1,68 @@
 <script setup>
 defineProps({
-    name: String,
-    checkName: String,
-    color: String,
-    check: Boolean
+  name: String,
+  checkName: String,
+  color: String,
+  check: Boolean
 })
 
 const emit = defineEmits(['check'])
 </script>
 
 <template>
-    <div class="interact-button">
+  <div class="interact-button">
         <span class="icon" :style="{'color': check ? color : 'unset'}" @click="emit('check')">
             <slot/>
         </span>
-        <span class="name" :style="{'color': color}">
-            {{check ? checkName : name}}
+    <span class="name" :style="{'color': color}">
+            {{ check ? checkName : name }}
         </span>
-    </div>
+  </div>
 </template>
+
+<!--<style scoped>-->
+<!--.interact-button {-->
+<!--    display: inline-block;-->
+<!--    height: 20px;-->
+
+<!--    .name {-->
+<!--        font-size: 13px;-->
+<!--        margin-left: 5px;-->
+<!--        opacity: 0.7;-->
+<!--    }-->
+
+<!--    .icon {-->
+<!--        vertical-align: middle;-->
+<!--        transition: .3s;-->
+
+<!--        &:hover {-->
+<!--            cursor: pointer;-->
+<!--            font-size: 18px;-->
+<!--        }-->
+<!--    }-->
+<!--}-->
+<!--</style>-->
 
 <style scoped>
 .interact-button {
-    display: inline-block;
-    height: 20px;
+  display: inline-block;
+  height: 20px;
+}
 
-    .name {
-        font-size: 13px;
-        margin-left: 5px;
-        opacity: 0.7;
-    }
+.interact-button .name {
+  font-size: 13px;
+  margin-left: 5px;
+  opacity: 0.7;
+}
 
-    .icon {
-        vertical-align: middle;
-        transition: .3s;
+.interact-button .icon {
+  vertical-align: middle;
+  transition: .3s;
+}
 
-        &:hover {
-            cursor: pointer;
-            font-size: 18px;
-        }
-    }
+.interact-button .icon:hover {
+  cursor: pointer;
+  font-size: 18px;
 }
 </style>
+
