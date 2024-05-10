@@ -18,7 +18,7 @@ public interface TopicService {
 
     List<TopicTopVO> listTopTopics();
 
-    TopicDetailsVO getTopic(int tid);
+    TopicDetailsVO getTopic(int tid,int uid);
 
     void interact(Interact interact, boolean state);
 

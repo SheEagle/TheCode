@@ -120,13 +120,13 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     }
 
     @Override
-    public TopicDetailsVO getTopic(int tid) {
+    public TopicDetailsVO getTopic(int tid,int uid) {
         TopicDetailsVO vo = new TopicDetailsVO();
         Topic topic = baseMapper.selectById(tid);
         BeanUtils.copyProperties(topic, vo);
         TopicDetailsVO.Interact interact = new TopicDetailsVO.Interact(
-                hasInteract(tid, topic.getUid(), "like"),
-                hasInteract(tid, topic.getUid(), "collect")
+                hasInteract(tid, uid, "like"),
+                hasInteract(tid, uid, "collect")
         );
         vo.setInteract(interact);
         TopicDetailsVO.User user = new TopicDetailsVO.User();

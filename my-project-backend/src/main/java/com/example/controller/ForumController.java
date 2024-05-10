@@ -68,8 +68,9 @@ public class ForumController {
     }
 
     @GetMapping("/topic")
-    public RestBean<TopicDetailsVO> topic(@RequestParam @Min(0) int tid) {
-        return RestBean.success(topicService.getTopic(tid));
+    public RestBean<TopicDetailsVO> topic(@RequestParam @Min(0) int tid,
+                                          @RequestAttribute(Const.ATTR_USER_ID) int id) {
+        return RestBean.success(topicService.getTopic(tid,id));
 
     }
 
