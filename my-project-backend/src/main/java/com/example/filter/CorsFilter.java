@@ -36,32 +36,35 @@ public class CorsFilter extends HttpFilter {
 
     /**
      * 添加所有跨域相关响应头
-     * @param request 请求
+     *
+     * @param request  请求
      * @param response 响应
      */
     private void addCorsHeader(HttpServletRequest request, HttpServletResponse response) {
         response.addHeader("Access-Control-Allow-Origin", this.resolveOrigin(request));
         response.addHeader("Access-Control-Allow-Methods", this.resolveMethod());
         response.addHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
-        if(credentials) {
+        if (credentials) {
             response.addHeader("Access-Control-Allow-Credentials", "true");
         }
     }
 
     /**
      * 解析配置文件中的请求方法
+     *
      * @return 解析得到的请求头值
      */
-    private String resolveMethod(){
+    private String resolveMethod() {
         return methods.equals("*") ? "GET, HEAD, POST, PUT, DELETE, OPTIONS, TRACE, PATCH" : methods;
     }
 
     /**
      * 解析配置文件中的请求原始站点
+     *
      * @param request 请求
      * @return 解析得到的请求头值
      */
-    private String resolveOrigin(HttpServletRequest request){
+    private String resolveOrigin(HttpServletRequest request) {
         return origin.equals("*") ? request.getHeader("Origin") : origin;
     }
 }

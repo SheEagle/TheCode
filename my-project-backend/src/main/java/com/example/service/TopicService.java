@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.entity.dto.Interact;
 import com.example.entity.dto.TopicType;
 import com.example.entity.vo.request.TopicCreateVO;
 import com.example.entity.vo.response.TopicDetailsVO;
@@ -16,5 +17,10 @@ public interface TopicService {
     List<TopicPreviewVO> listTopicByPage(int page, int type);
 
     List<TopicTopVO> listTopTopics();
-    TopicDetailsVO getTopic(int tid)
-;}
+
+    TopicDetailsVO getTopic(int tid);
+
+    void interact(Interact interact,boolean state);
+
+
+}
