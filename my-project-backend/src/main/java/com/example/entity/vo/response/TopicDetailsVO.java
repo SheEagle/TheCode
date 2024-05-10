@@ -1,5 +1,6 @@
 package com.example.entity.vo.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.commons.compress.harmony.pack200.NewAttributeBands;
 
@@ -13,6 +14,14 @@ public class TopicDetailsVO {
     Integer type;
     Date time;
     User user;
+    Interact interact;
+
+    @Data
+    @AllArgsConstructor
+    public static class Interact {
+        Boolean like;
+        Boolean collect;
+    }
 
 
     @Data
