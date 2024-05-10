@@ -166,6 +166,7 @@ navigator.geolocation.getCurrentPosition(position => {
         </div>
         <div style="width: 280px">
             <div style="position: sticky;top: 20px">
+                <!--收藏-->
                 <light-card>
                     <div class="collect-list-button" @click="collects = true">
                         <span><el-icon><FolderOpened /></el-icon> 查看我的收藏</span>

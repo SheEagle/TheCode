@@ -20,7 +20,9 @@ public interface TopicService {
 
     TopicDetailsVO getTopic(int tid);
 
-    void interact(Interact interact,boolean state);
+    void interact(Interact interact, boolean state);
+
+    List<TopicPreviewVO> listTopicCollects(int uid);
 
 
 }

@@ -83,5 +83,10 @@ public class ForumController {
 
     }
 
+    @GetMapping("/collects")
+    public RestBean<List<TopicPreviewVO>> collects(@RequestAttribute(Const.ATTR_USER_ID) int id) {
+        return RestBean.success(topicService.listTopicCollects(id));
+    }
+
 
 }
