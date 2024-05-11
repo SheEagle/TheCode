@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.example.entity.RestBean;
 import com.example.entity.dto.Interact;
 import com.example.entity.vo.request.TopicCreateVO;
+import com.example.entity.vo.request.TopicUpdateVO;
 import com.example.entity.vo.response.*;
 import com.example.service.TopicService;
 import com.example.service.WeatherService;
@@ -70,7 +71,7 @@ public class ForumController {
     @GetMapping("/topic")
     public RestBean<TopicDetailsVO> topic(@RequestParam @Min(0) int tid,
                                           @RequestAttribute(Const.ATTR_USER_ID) int id) {
-        return RestBean.success(topicService.getTopic(tid,id));
+        return RestBean.success(topicService.getTopic(tid, id));
 
     }
 
@@ -89,5 +90,11 @@ public class ForumController {
         return RestBean.success(topicService.listTopicCollects(id));
     }
 
+    @PostMapping("/update-topic")
+    public RestBean<Void> updateTopic(@Valid @RequestBody TopicUpdateVO vo,
+                                      @RequestAttribute(Const.ATTR_USER_ID) int id) {
+
+        return utils.messageHandle(() -> topicService.updateTopic(id, vo));
+    }
 
 }
