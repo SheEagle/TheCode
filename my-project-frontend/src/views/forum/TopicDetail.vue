@@ -3,7 +3,7 @@ import {useRoute} from "vue-router";
 import {get, post} from "@/net";
 import axios from "axios";
 import {computed, reactive} from "vue";
-import {ArrowLeft, CircleCheck, EditPen, Female, Male, Star} from "@element-plus/icons-vue";
+import {ArrowLeft, CircleCheck, EditPen, Female, Male, Plus, Star} from "@element-plus/icons-vue";
 import {QuillDeltaToHtmlConverter} from 'quill-delta-to-html';
 import Card from "@/components/Card.vue";
 import router from "@/router";
@@ -13,6 +13,7 @@ import {ElMessage} from "element-plus";
 import {ref} from "vue";
 import {useStore} from "@/store";
 import TopicEditor from "@/components/TopicEditor.vue";
+import TopicCommentEditor from "@/components/TopicCommentEditor.vue";
 
 const route = useRoute()
 const store = useStore()
@@ -73,6 +74,12 @@ function updateTopic(editor) {
 }
 
 const edit = ref(false)
+const comment = reactive({
+  show: false,
+  text: '',
+  quote: -1
+
+})
 </script>
 
 <template>
@@ -146,15 +153,25 @@ const edit = ref(false)
           </interact-button>
         </div>
       </div>
+    </div>
 
 
-      <!--编辑帖子框-->
-      <topic-editor :show="edit" @close="edit = false" v-if="topic.data && store.forum.types"
-                    :default-type="topic.data.type" :default-text="topic.data.content"
-                    :default-title="topic.data.title" submit-button="更新帖子内容" :submit="updateTopic"></topic-editor>
+    <!--编辑帖子框-->
+    <topic-editor :show="edit" @close="edit = false" v-if="topic.data && store.forum.types"
+                  :default-type="topic.data.type" :default-text="topic.data.content"
+                  :default-title="topic.data.title" submit-button="更新帖子内容" :submit="updateTopic"></topic-editor>
+    <topic-comment-editor :show="comment.show" @close="comment.show=false" :tid="tid"
+                          :quote="comment.quote"></topic-comment-editor>
+    <div class="add-comment" @click="comment.show = true">
+      <el-icon>
+        <Plus/>
+      </el-icon>
+
     </div>
   </div>
+
 </template>
+
 
 <style lang="scss" scoped>
 .topic-page {
@@ -162,36 +179,57 @@ const edit = ref(false)
   flex-direction: column;
   gap: 10px;
   padding: 10px 0;
+}
 
-  .topic-main {
-    display: flex;
-    border-radius: 7px;
-    margin: 0 auto;
-    background-color: var(--el-bg-color);
-    width: 800px;
+.topic-main {
+  display: flex;
+  border-radius: 7px;
+  margin: 0 auto;
+  background-color: var(--el-bg-color);
+  width: 800px;
 
-    &-left {
-      width: 200px;
-      padding: 10px;
-      text-align: center;
-      border-right: solid 1px var(--el-border-color);
+  .topic-main-left {
+    width: 200px;
+    padding: 10px;
+    text-align: center;
+    border-right: solid 1px var(--el-border-color);
 
-      .desc {
-        font-size: 12px;
-        color: grey;
-      }
-    }
-
-    &-right {
-      width: 600px;
-      padding: 10px 20px;
-
-      .topic-content {
-        font-size: 14px;
-        line-height: 22px;
-        opacity: 0.8;
-      }
+    .desc {
+      font-size: 12px;
+      color: grey;
     }
   }
+
+  .topic-main-right {
+    width: 600px;
+    padding: 10px 20px;
+
+    .topic-content {
+      font-size: 14px;
+      line-height: 22px;
+      opacity: 0.8;
+    }
+  }
+}
+
+.add-comment {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 18px;
+  color: var(--el-color-primary);
+  text-align: center;
+  line-height: 45px;
+  background: var(--el-bg-color-overlay);
+  box-shadow: var(--el-box-shadow-lighter);
+
+  &:hover {
+    background: var(--el-border-color-extra-light);
+    cursor: pointer;
+  }
+
 }
 </style>

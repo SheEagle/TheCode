@@ -33,7 +33,7 @@ function submitComment() {
 }
 
 function deltaToSimpleText(delta) {
-    let str = deltaToText(JSON.parse(delta))
+    let str = deltaToText(delta)
     if(str.length > 35) str = str.substring(0, 35) + "..."
     return str
 }
@@ -58,7 +58,7 @@ function deltaToText(delta) {
             <div>
                 <div>
                     <quill-editor style="height: 120px" v-model:content="content"
-                                  placeholder="请发表友善的评论，不要使用脏话骂人，都是大学生素质高一点"/>
+                                  placeholder="请发表友善的评论"/>
                 </div>
                 <div style="margin-top: 10px;display: flex">
                     <div style="flex: 1;font-size: 13px;color: grey">
