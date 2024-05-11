@@ -5,6 +5,7 @@ import com.example.entity.dto.TopicType;
 import com.example.entity.vo.request.AddCommentVO;
 import com.example.entity.vo.request.TopicCreateVO;
 import com.example.entity.vo.request.TopicUpdateVO;
+import com.example.entity.vo.response.CommentVO;
 import com.example.entity.vo.response.TopicDetailsVO;
 import com.example.entity.vo.response.TopicPreviewVO;
 import com.example.entity.vo.response.TopicTopVO;
@@ -28,6 +29,7 @@ public interface TopicService {
 
     String updateTopic(int uid, TopicUpdateVO vo);
     String createComment(int uid, AddCommentVO vo);
+    List<CommentVO> comments(int tid,int pageNumber);
 
 
 }

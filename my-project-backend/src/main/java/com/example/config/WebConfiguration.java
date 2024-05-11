@@ -27,9 +27,9 @@ public class WebConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public PaginationInnerInterceptor paginationInterceptor() {
-        PaginationInnerInterceptor interceptor = new PaginationInnerInterceptor(DbType.MYSQL);
-        interceptor.setMaxLimit(100L);
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return interceptor;
     }
 }
