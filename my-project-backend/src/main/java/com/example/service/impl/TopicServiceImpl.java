@@ -196,30 +196,67 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
 
     @Override
     public List<CommentVO> comments(int tid, int pageNumber) {
+        // 创建分页对象
         Page<TopicComment> page = Page.of(pageNumber, 10);
+        // 查询指定帖子的评论并填充到分页对象中
         commentMapper.selectPage(page, Wrappers.<TopicComment>query().eq("tid", tid));
+        // 将查询结果转换为CommentVO列表并返回
         return page.getRecords().stream().map(dto -> {
             CommentVO vo = new CommentVO();
+            // 复制属性值
             BeanUtils.copyProperties(dto, vo);
-            Optional<TopicComment> topicCommentOptional = Optional.ofNullable(commentMapper.selectOne(Wrappers.<TopicComment>query().eq("id", dto.getQuote()).orderByAsc("time")));
-            if (topicCommentOptional.isPresent()) {
-                TopicComment topicComment = topicCommentOptional.get();
-                if (topicComment.getQuote() != null && topicComment.getQuote() > 0) {
+            // 检查引用评论是否存在且有效
+            if (dto.getQuote() != null && dto.getQuote() > 0) {
+                // 查询引用评论
+                Optional<TopicComment> topicCommentOptional = Optional.ofNullable(commentMapper.selectOne(Wrappers.<TopicComment>query().eq("id", dto.getQuote()).orderByAsc("time")));
+                // 如果引用评论存在
+                if (topicCommentOptional.isPresent()) {
+                    TopicComment topicComment = topicCommentOptional.get();
                     JSONObject object = JSONObject.parseObject(topicComment.getContent());
+                    // 获取引用评论内容
                     StringBuilder builder = new StringBuilder();
                     this.shortContent(object.getJSONArray("ops"), builder, ignore -> {
                     });
+                    // 设置引用评论内容到CommentVO对象中
                     vo.setQuote(builder.toString());
                 } else {
+                    // 如果引用评论不存在，设置一条提示信息到CommentVO对象中
                     vo.setQuote("此评论已被删除");
                 }
             }
+            // 填充用户详情到CommentVO对象中
             CommentVO.User user = new CommentVO.User();
             this.fillUserDetailsByPrivacy(user, dto.getUid());
             vo.setUser(user);
             return vo;
         }).toList();
     }
+
+//    public List<CommentVO> comments(int tid, int pageNumber) {
+//        Page<TopicComment> page = Page.of(pageNumber, 10);
+//        commentMapper.selectPage(page, Wrappers.<TopicComment>query().eq("tid", tid));
+//        return page.getRecords().stream().map(dto -> {
+//            CommentVO vo = new CommentVO();
+//            BeanUtils.copyProperties(dto, vo);
+//            Optional<TopicComment> topicCommentOptional = Optional.ofNullable(commentMapper.selectOne(Wrappers.<TopicComment>query().eq("id", dto.getQuote()).orderByAsc("time")));
+//            if (topicCommentOptional.isPresent()) {
+//                TopicComment topicComment = topicCommentOptional.get();
+//                if (topicComment.getQuote() != null && topicComment.getQuote() > 0) {
+//                    JSONObject object = JSONObject.parseObject(topicComment.getContent());
+//                    StringBuilder builder = new StringBuilder();
+//                    this.shortContent(object.getJSONArray("ops"), builder, ignore -> {
+//                    });
+//                    vo.setQuote(builder.toString());
+//                } else {
+//                    vo.setQuote("此评论已被删除");
+//                }
+//            }
+//            CommentVO.User user = new CommentVO.User();
+//            this.fillUserDetailsByPrivacy(user, dto.getUid());
+//            vo.setUser(user);
+//            return vo;
+//        }).toList();
+//    }
 
     @Override
     public void deleteComment(int id, int uid) {

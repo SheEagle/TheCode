@@ -59,7 +59,6 @@ function deltaToText(delta) {
 
   // 遍历 delta.ops 数组
   for (let op of delta.ops) {
-    console.info("进来了")
     // 检查操作对象中是否有 insert 字段
     if (op.insert) {
       // 如果有 insert 字段，则将其值添加到 str 中
