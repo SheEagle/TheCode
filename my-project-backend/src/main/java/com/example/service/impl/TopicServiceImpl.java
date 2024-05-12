@@ -14,6 +14,7 @@ import com.example.entity.vo.response.TopicDetailsVO;
 import com.example.entity.vo.response.TopicPreviewVO;
 import com.example.entity.vo.response.TopicTopVO;
 import com.example.mapper.*;
+import com.example.service.NotificationService;
 import com.example.service.TopicService;
 import com.example.utils.CacheUtils;
 import com.example.utils.Const;
@@ -56,6 +57,9 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
 
     @Resource
     TopicCommentMapper commentMapper;
+
+    @Resource
+    NotificationService notificationService;
 
     private Set<Integer> types = null;
 
@@ -191,6 +195,28 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         BeanUtils.copyProperties(vo, comment);
         comment.setTime(new Date());
         commentMapper.insert(comment);
+        Topic topic = baseMapper.selectById(vo.getTid());
+        Account account = accountMapper.selectById(uid);
+        if (vo.getQuote() > 0) {
+            TopicComment com = commentMapper.selectById(vo.getQuote());
+            if (!Objects.equals(account.getId(), com.getUid())) {
+                notificationService.addNotification(
+                        com.getUid(),
+                        "您有新的帖子评论回复",
+                        account.getUsername() + "回复了你发表的评论，快去看看吧",
+                        "success",
+                        "/index/topic-detail/" + com.getTid()
+                );
+            }
+        } else if (!Objects.equals(account.getId(), topic.getUid())) {
+            notificationService.addNotification(
+                    topic.getUid(),
+                    "您有新的帖子回复",
+                    account.getUsername() + "回复了你发表的主题：" + topic.getTitle() + "，快去看看吧！",
+                    "success",
+                    "/index/topic-detail/" + topic.getId()
+            );
+        }
         return null;
     }
 

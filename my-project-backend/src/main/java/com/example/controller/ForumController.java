@@ -1,6 +1,5 @@
 package com.example.controller;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.example.entity.RestBean;
 import com.example.entity.dto.Interact;
 import com.example.entity.vo.request.AddCommentVO;
@@ -12,14 +11,12 @@ import com.example.service.WeatherService;
 import com.example.utils.Const;
 import com.example.utils.ControllerUtils;
 import jakarta.annotation.Resource;
-import jakarta.annotation.Resources;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
-import javax.xml.crypto.Data;
 import java.util.Date;
 import java.util.List;
 

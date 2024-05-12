@@ -1,7 +1,6 @@
 <script setup>
 import {useRoute} from "vue-router";
 import {get, post} from "@/net";
-import axios from "axios";
 import {computed, reactive} from "vue";
 import {ArrowLeft, ChatSquare, CircleCheck, Delete, EditPen, Female, Male, Plus, Star} from "@element-plus/icons-vue";
 import {QuillDeltaToHtmlConverter} from 'quill-delta-to-html';
@@ -43,14 +42,6 @@ const init = () => get(`api/forum/topic?tid=${tid}`, data => {
 
 init()
 
-// 在组件挂载之前发送请求
-// beforeMount(() => {
-//   get(`api/forum/topic?tid=${tid}`, data => {
-//     topic.data = data
-//     topic.like = data.interact.like
-//     topic.collect = data.interact.collect
-//   })
-// })
 
 function convertToHtml(content) {
   const ops = JSON.parse(content).ops
