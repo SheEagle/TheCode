@@ -28,8 +28,12 @@ public interface TopicService {
     List<TopicPreviewVO> listTopicCollects(int uid);
 
     String updateTopic(int uid, TopicUpdateVO vo);
+
     String createComment(int uid, AddCommentVO vo);
-    List<CommentVO> comments(int tid,int pageNumber);
+
+    List<CommentVO> comments(int tid, int pageNumber);
+
+    void deleteComment(int id, int uid);
 
 
 }

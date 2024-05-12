@@ -198,25 +198,10 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     public List<CommentVO> comments(int tid, int pageNumber) {
         Page<TopicComment> page = Page.of(pageNumber, 10);
         commentMapper.selectPage(page, Wrappers.<TopicComment>query().eq("tid", tid));
-//        return page.getRecords().stream().map(dto -> {
-//            CommentVO vo = new CommentVO();
-//            BeanUtils.copyProperties(dto, vo);
-//            if (dto.getQuote() > 0) {
-//                JSONObject object = JSONObject.parseObject(commentMapper.selectOne(Wrappers.<TopicComment>query().eq("id", dto.getId())).getContent());
-//                StringBuilder builder=new StringBuilder();
-//                this.shortContent(object.getJSONArray("ops"),builder,ignore->{});
-//                vo.setQuote(builder.toString());
-//            }
-//            CommentVO.User user=new CommentVO.User();
-//            this.fillUserDetailsByPrivacy(user,dto.getUid());
-//            vo.setUser(user);
-//            return vo;
-//        }).toList();
         return page.getRecords().stream().map(dto -> {
             CommentVO vo = new CommentVO();
             BeanUtils.copyProperties(dto, vo);
-
-            Optional<TopicComment> topicCommentOptional = Optional.ofNullable(commentMapper.selectOne(Wrappers.<TopicComment>query().eq("id", dto.getId()).orderByAsc("time")));
+            Optional<TopicComment> topicCommentOptional = Optional.ofNullable(commentMapper.selectOne(Wrappers.<TopicComment>query().eq("id", dto.getQuote()).orderByAsc("time")));
             if (topicCommentOptional.isPresent()) {
                 TopicComment topicComment = topicCommentOptional.get();
                 if (topicComment.getQuote() != null && topicComment.getQuote() > 0) {
@@ -225,15 +210,20 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
                     this.shortContent(object.getJSONArray("ops"), builder, ignore -> {
                     });
                     vo.setQuote(builder.toString());
+                } else {
+                    vo.setQuote("此评论已被删除");
                 }
             }
-
             CommentVO.User user = new CommentVO.User();
             this.fillUserDetailsByPrivacy(user, dto.getUid());
             vo.setUser(user);
-
             return vo;
         }).toList();
+    }
+
+    @Override
+    public void deleteComment(int id, int uid) {
+        commentMapper.delete(Wrappers.<TopicComment>query().eq("id", id).eq("uid", uid));
     }
 
     private boolean hasInteract(int tid, int uid, String type) {

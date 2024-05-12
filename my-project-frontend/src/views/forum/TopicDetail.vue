@@ -3,7 +3,7 @@ import {useRoute} from "vue-router";
 import {get, post} from "@/net";
 import axios from "axios";
 import {computed, reactive} from "vue";
-import {ArrowLeft, CircleCheck, EditPen, Female, Male, Plus, Star} from "@element-plus/icons-vue";
+import {ArrowLeft, ChatSquare, CircleCheck, Delete, EditPen, Female, Male, Plus, Star} from "@element-plus/icons-vue";
 import {QuillDeltaToHtmlConverter} from 'quill-delta-to-html';
 import Card from "@/components/Card.vue";
 import router from "@/router";
@@ -86,12 +86,19 @@ const edit = ref(false)
 const comment = reactive({
   show: false,
   text: '',
-  quote: -1
+  quote: null
 })
 
 function onCommentAdd() {
   comment.show = false
   loadComments(Math.floor(++topic.data.comments / 10) + 1)
+}
+
+function deleteComment(id) {
+  get(`api/forum/delete-comment?id=${id}`, () => {
+    ElMessage.success('删除评论成功！')
+    loadComments(topic.page)
+  })
 }
 
 
@@ -198,20 +205,28 @@ function onCommentAdd() {
           </div>
 
           <div class="topic-main-right">
+            <div v-if="item.quote" class="comment-quote">
+              回复:{{ item.quote }}
+            </div>
             <div style="font-size: 13px;color: grey">
               <div>评论时间: {{ new Date(item.time).toLocaleString() }}</div>
             </div>
             <div class="topic-content" v-html="convertToHtml(item.content)"></div>
-
+            <div style="text-align: right">
+              <el-link :icon="ChatSquare" @click="comment.show=true;comment.quote=item"
+                       type="info">&nbsp;回复评论
+              </el-link>
+              <el-link :icon="Delete" type="danger" v-if="item.user.id===store.user.id"
+                       style="margin-left: 20px" @click="deleteComment(item.id)">&nbsp;删除评论
+              </el-link>
+            </div>
           </div>
         </div>
         <div style="width: fit-content;margin: 20px auto">
           <el-pagination background layout="prev,pager,next"
                          v-model:current-page="topic.page" @current-change="loadComments"
                          :total="topic.data.comments" :page-size="10"
-                         hide-on-single-page
-          />
-
+                         hide-on-single-page/>
         </div>
       </div>
     </transition>
@@ -224,7 +239,7 @@ function onCommentAdd() {
     <!--发表评论-->
     <topic-comment-editor :show="comment.show" @close="comment.show=false" :tid="tid"
                           :quote="comment.quote" @comment="onCommentAdd"></topic-comment-editor>
-    <div class="add-comment" @click="comment.show = true">
+    <div class="add-comment" @click="comment.show = true;comment.quote=null">
       <el-icon>
         <Plus/>
       </el-icon>
@@ -293,5 +308,14 @@ function onCommentAdd() {
     cursor: pointer;
   }
 
+}
+
+.comment-quote {
+  font-size: 13px;
+  color: grey;
+  background-color: rgba(94, 94, 94, 0.2);
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
 }
 </style>
