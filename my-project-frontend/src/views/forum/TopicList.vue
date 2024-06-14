@@ -48,6 +48,7 @@ const today = computed(() => {
   const date = new Date()
   return `${date.getFullYear()} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日`
 })
+
 get('/api/forum/top-topic', data => topics.top = data)
 
 function updateList() {
@@ -95,14 +96,15 @@ navigator.geolocation.getCurrentPosition(position => {
 </script>
 
 <template>
-  <div style="display: flex;margin: 20px auto;gap: 20px;max-width: 900px">
+  <div style="display: flex;margin: 20px auto;gap: 20px;max-width: 90%">
     <div style="flex: 1">
+      <!--发表帖子-->
       <light-card>
         <div class="create-topic" @click="editor = true">
           <el-icon>
             <EditPen/>
           </el-icon>
-          点击发表主题...
+          Submit a new post...
         </div>
         <div style="margin-top: 10px;display: flex;gap: 13px;font-size: 18px;color: grey">
           <el-icon>
@@ -122,13 +124,17 @@ navigator.geolocation.getCurrentPosition(position => {
           </el-icon>
         </div>
       </light-card>
+
+      <!--置顶-->
       <light-card style="margin-top: 10px;display: flex;flex-direction: column;gap: 10px">
         <div v-for="item in topics.top" class="top-topic" @click="router.push(`/index/topic-detail/${item.id}`)">
-          <el-tag type="info" size="small">置顶</el-tag>
+          <el-tag type="info" size="small">Top</el-tag>
           <div>{{ item.title }}</div>
           <div>{{ new Date(item.time).toLocaleDateString() }}</div>
         </div>
       </light-card>
+
+      <!--帖子类型-->
       <light-card style="margin-top: 10px;display: flex;gap: 7px">
         <div :class="`type-select-card ${topics.type === item.id ? 'active' : ''}`"
              v-for="item in store.forum.types"
@@ -137,10 +143,14 @@ navigator.geolocation.getCurrentPosition(position => {
           <span style="margin-left: 5px">{{ item.name }}</span>
         </div>
       </light-card>
+
+
       <transition name="el-fade-in" mode="out-in">
         <div v-if="topics.list.length">
           <div style="margin-top: 10px;display: flex;flex-direction: column;gap: 10px"
                v-infinite-scroll="updateList">
+
+            <!--帖子列表-->
             <light-card v-for="item in topics.list" class="topic-card"
                         @click="router.push('/index/topic-detail/'+item.id)">
               <div style="display: flex">
@@ -172,13 +182,13 @@ navigator.geolocation.getCurrentPosition(position => {
                   <el-icon style="vertical-align: middle">
                     <CircleCheck/>
                   </el-icon>
-                  {{ item.like }}点赞
+                  {{ item.like }}like
                 </div>
                 <div>
                   <el-icon style="vertical-align: middle">
                     <Star/>
                   </el-icon>
-                  {{ item.collect }}收藏
+                  {{ item.collect }}collect
                 </div>
               </div>
             </light-card>
@@ -186,73 +196,99 @@ navigator.geolocation.getCurrentPosition(position => {
         </div>
       </transition>
     </div>
-    <div style="width: 280px">
+
+    <!--侧边栏-->
+    <div style="width: 25%">
       <div style="position: sticky;top: 20px">
         <!--收藏-->
         <light-card>
           <div class="collect-list-button" @click="collects = true">
-            <span><el-icon><FolderOpened/></el-icon> 查看我的收藏</span>
+            <span><el-icon><FolderOpened/></el-icon> My Collections</span>
             <el-icon style="transform: translateY(3px)">
               <ArrowRightBold/>
             </el-icon>
           </div>
         </light-card>
-        <light-card style="margin-top: 10px">
+
+        <!--公告栏-->
+        <light-card
+            style="margin-top: 10px ; background: linear-gradient(135deg, #11998e, #38ef7d); color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2)">
           <div style="font-weight: bold">
             <el-icon>
               <CollectionTag/>
             </el-icon>
-            论坛公告
+            Announcement
           </div>
           <el-divider style="margin: 10px 0"/>
-          <div style="font-size: 14px;margin: 10px;color: grey">
-            为认真学习宣传贯彻党的二十大精神,深入贯彻习近平强军思想,
-            作为迎接办学70周年系列学术活动之一,国防科技大学将于2022年11月24日至26日在长沙举办“国防科技
+          <div style="font-size: 14px;margin: 10px;color: white">
+            欢迎来到The Code!
           </div>
         </light-card>
-        <light-card style="margin-top: 10px">
+
+
+        <light-card
+            style="margin-top: 10px;background: linear-gradient(135deg, #ffd89b, #19547b); color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
           <div style="font-weight: bold">
             <el-icon>
               <Calendar/>
             </el-icon>
-            天气信息
+            Weather
           </div>
-          <el-divider style="margin: 10px 0"/>
+          <el-divider style="border-color: rgba(255, 255, 255, 0.5); margin: 10px 0"/>
           <weather :data="weather"/>
         </light-card>
-        <light-card style="margin-top: 10px">
-          <div class="info-text">
-            <div>当前日期</div>
+
+        <light-card
+            style="margin-top: 10px;background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;font-size: 15px">
+            <div>Date</div>
             <div>{{ today }}</div>
           </div>
-          <div class="info-text">
-            <div>当期IP地址</div>
+          <div style="display: flex; justify-content: space-between;font-size: 15px">
+            <div>IP Address</div>
             <div>127.0.0.1</div>
           </div>
         </light-card>
-        <div style="font-size: 14px;margin-top: 10px;color: grey">
+
+        <!--链接-->
+        <div style="font-size: 20px;margin-top: 10px;color: grey">
           <el-icon>
             <Link/>
           </el-icon>
-          友情链接
+          Links
           <el-divider style="margin: 10px 0"/>
         </div>
-        <div style="display: grid;grid-template-columns: repeat(2, 1fr);grid-gap: 10px;margin-top: 10px">
+
+        <div style="display: grid; grid-template-columns: 1fr; grid-gap: 10px; margin-top: 10px">
           <div class="friend-link">
-            <el-image style="height: 100%" src="https://element-plus.org/images/js-design-banner.jpg"/>
+            <!-- LinkedIn 链接和图片 -->
+            <a href="https://www.linkedin.com/" target="_blank">
+              <el-image
+                  style="width: 80%; height: 50px; object-fit: cover;margin-left: 20px"
+                  src="/src/assets/linkedin.png"
+                  alt="LinkedIn"
+              ></el-image>
+            </a>
           </div>
           <div class="friend-link">
-            <el-image style="height: 100%" src="https://element-plus.org/images/vform-banner.png"/>
+            <!-- Google Scholar 链接和图片 -->
+            <a href="https://scholar.google.com/" target="_blank">
+              <el-image
+                  style="width: 80%; max-height: 50px; object-fit: cover;margin-left: 20px"
+                  src="/src/assets/google.jpg"
+                  alt="Google Scholar"
+              ></el-image>
+            </a>
           </div>
-          <div class="friend-link">
-            <el-image style="height: 100%" src="https://element-plus.org/images/sponsors/jnpfsoft.jpg"/>
-          </div>
+
         </div>
       </div>
     </div>
+
     <topic-editor :show="editor" @success="onTopicCreate" @close="editor = false"/>
     <topic-collect-list :show="collects" @close="collects = false"/>
   </div>
+
 </template>
 
 <style lang="less" scoped>
@@ -316,10 +352,15 @@ navigator.geolocation.getCurrentPosition(position => {
 .topic-card {
   padding: 15px;
   transition: scale .3s;
+  //background: linear-gradient(to bottom right, rgba(106, 17, 203, 0.00), rgba(37, 117, 252, 0.00));
+  //color: #fff;
+  font-family: 'Roboto', sans-serif;
+  //transition: all 0.3s ease;
 
   &:hover {
     scale: 1.015;
     cursor: pointer;
+
   }
 
   .topic-content {
@@ -337,7 +378,9 @@ navigator.geolocation.getCurrentPosition(position => {
     width: 100%;
     height: 100%;
     max-height: 110px;
-    border-radius: 5px;
+    //border-radius: 5px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 }
 
@@ -384,4 +427,73 @@ navigator.geolocation.getCurrentPosition(position => {
     }
   }
 }
+
+
+.friend-link {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.friend-link:hover {
+  transform: scale(1.03);
+}
+
+.collect-list-button {
+  background: linear-gradient(135deg, #8e2de2, #4a00e0);
+  color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.collect-list-button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.announcement-card {
+  background: linear-gradient(135deg, rgba(17, 153, 142, 0.2), rgba(56, 239, 125, 0.2));
+  color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.announcement-card .el-divider--horizontal {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+
+.weather-card {
+  background: linear-gradient(135deg, #ffd89b, #19547b);
+  color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.info-card {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.info-text {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+
 </style>
+
+
+
+

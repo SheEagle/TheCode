@@ -31,9 +31,9 @@ const emailForm = reactive({
 
 const validateUsername = (rule, value, callback) => {
   if (value === '') {
-    callback(new Error('请输入用户名'))
+    callback(new Error('Please enter your username'))
   } else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(value)) {
-    callback(new Error('用户名不能包含特殊字符，只能是中文/英文'))
+    callback(new Error('Username cannot contain special characters, only Chinese/English characters'))
   } else {
     callback()
   }
@@ -42,12 +42,14 @@ const validateUsername = (rule, value, callback) => {
 const rules = {
   username: [
     {validator: validateUsername, trigger: ['blur', 'change']},
-    {min: 2, max: 10, message: '用户名的长度必须在2-10个字符之间', trigger: ['blur', 'change']},
-  ], email: [
-    {required: true, message: '请输入邮件地址', trigger: 'blur'},
-    {type: 'email', message: '请输入合法的电子邮件地址', trigger: ['blur', 'change']}
+    {min: 2, max: 10, message: 'Username must be between 2 and 10 characters long', trigger: ['blur', 'change']},
+  ],
+  email: [
+    {required: true, message: 'Please enter your email address', trigger: 'blur'},
+    {type: 'email', message: 'Please enter a valid email address', trigger: ['blur', 'change']}
   ]
 }
+
 
 const loading = reactive({
   form: true,
@@ -174,66 +176,67 @@ function uploadSuccess(response) {
 </script>
 
 <template>
-  <div style="display: flex;max-width: 950px;margin: auto">
+  <div style="display: flex;max-width: 1000px;margin: auto">
     <div class="settings-left">
 
       <!--账号信息设置-->
-      <card :icon="User" title="账号信息设置" desc="在这里编辑您的个人信息，您可以在隐私设置中选择是否展示这些信息"
+      <card :icon="User" title="Account Settings"
+            desc="Edit your personal information here. You can choose whether to display this information in privacy settings."
             v-loading="loading.form">
         <el-form :model="baseForm" :rules="rules" ref="baseFormRef" label-position="top"
                  style="margin: 0 10px 10px 10px">
-          <el-form-item label="用户名" prop="username">
+          <el-form-item label="Username" prop="username">
             <el-input v-model="baseForm.username" maxlength="10"/>
           </el-form-item>
-          <el-form-item label="性别">
+          <el-form-item label="Gender">
             <el-radio-group v-model="baseForm.gender">
-              <el-radio :label="0">男</el-radio>
-              <el-radio :label="1">女</el-radio>
+              <el-radio :label="0">Male</el-radio>
+              <el-radio :label="1">Female</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="手机号" prop="phone">
+          <el-form-item label="Phone" prop="phone">
             <el-input v-model="baseForm.phone" maxlength="11"/>
           </el-form-item>
-          <el-form-item label="QQ号" prop="qq">
+          <el-form-item label="QQ" prop="qq">
             <el-input v-model="baseForm.qq" maxlength="13"/>
           </el-form-item>
-          <el-form-item label="微信号" prop="wx">
+          <el-form-item label="Wechat" prop="wx">
             <el-input v-model="baseForm.wx" maxlength="20"/>
           </el-form-item>
-          <el-form-item label="个人简介" prop="introduction">
+          <el-form-item label="Introduction" prop="introduction">
             <el-input v-model="baseForm.introduction" type="textarea" :rows="6" maxlength="200"/>
           </el-form-item>
           <div>
             <el-button :icon="Select" @click="saveDetails" :loading="loading.base"
-                       type="success">保存用户信息
+                       type="success">Save User Profile
             </el-button>
           </div>
         </el-form>
       </card>
 
       <!--修改邮件地址-->
-      <card style="margin-top: 10px" :icon="Message" title="电子邮件设置"
-            desc="您可以在这里修改默认绑定的电子邮件地址">
+      <card style="margin-top: 10px" :icon="Message" title="Email Settings"
+            desc="You can modify the default email here.">
         <el-form :rules="rules" @validate="onValidate" :model="emailForm" ref="emailFormRef"
                  label-position="top" style="margin: 0 10px 10px 10px">
-          <el-form-item label="电子邮件" prop="email">
+          <el-form-item label="Email" prop="email">
             <el-input v-model="emailForm.email"/>
           </el-form-item>
           <el-form-item prop="code">
             <el-row style="width: 100%" :gutter="10">
               <el-col :span="18">
-                <el-input placeholder="请获取验证码" v-model="emailForm.code"/>
+                <el-input placeholder="Please get verification code" v-model="emailForm.code"/>
               </el-col>
               <el-col :span="6">
                 <el-button type="success" style="width: 100%" :disabled="!isEmailValid || coldTime > 0"
                            @click="sendEmailCode" plain>
-                  {{ coldTime > 0 ? `请稍后 ${coldTime} 秒` : '获取验证码' }}
+                  {{ coldTime > 0 ? `Please wait ${coldTime} seconds` : 'get code' }}
                 </el-button>
               </el-col>
             </el-row>
           </el-form-item>
           <div>
-            <el-button :icon="Refresh" type="success" @click="modifyEmail">更新电子邮件</el-button>
+            <el-button :icon="Refresh" type="success" @click="modifyEmail">Update Email</el-button>
           </div>
         </el-form>
       </card>
@@ -252,10 +255,10 @@ function uploadSuccess(response) {
                   :before-upload="beforeAvatarUpload"
                   :on-success="uploadSuccess"
                   :headers="accessHeader()">
-                <el-button size="small" round>修改头像</el-button>
+                <el-button size="small" round>Update Avatar</el-button>
               </el-upload>
             </div>
-            <div style="font-weight: bold">你好, {{ store.user.username }}</div>
+            <div style="font-weight: bold">Hi, {{ store.user.username }}</div>
           </div>
           <el-divider style="margin: 10px 0"/>
           <div style="font-size: 14px;color: grey;padding: 10px">
@@ -265,22 +268,74 @@ function uploadSuccess(response) {
 
         <!--账号注册时间-->
         <card style="margin-top: 10px;font-size: 14px">
-          <div>账号注册时间: {{ registerTime }}</div>
-          <div style="color: grey">欢迎加入我们的学习论坛！</div>
+          <div>Registration Time: {{ registerTime }}</div>
+          <div style="color: grey">Welcome to Ultraviolet!</div>
         </card>
       </div>
     </div>
   </div>
 </template>
 
+<!--<style scoped>-->
+<!--.settings-left {-->
+<!--  flex: 1;-->
+<!--  margin: 20px;-->
+<!--}-->
+
+<!--.settings-right {-->
+<!--  width: 300px;-->
+<!--  margin: 20px 30px 20px 0;-->
+<!--}-->
+<!--</style>-->
 <style scoped>
-.settings-left {
-  flex: 1;
+.settings-left,
+.settings-right {
   margin: 20px;
 }
 
-.settings-right {
-  width: 300px;
-  margin: 20px 30px 20px 0;
+.settings-left {
+  max-width: 600px; /* 限制最大宽度 */
 }
+
+.settings-right {
+  flex: none; /* 不使用flex伸缩 */
+}
+
+/* 统一卡片样式 */
+.card {
+  border-radius: 10px; /* 圆角边框 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+  transition: box-shadow 0.3s; /* 阴影过渡效果 */
+  overflow: hidden; /* 确保内容不会超出边框 */
+}
+
+.card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* 鼠标悬停时更深的阴影 */
+}
+
+/* 表单标题样式 */
+.el-form {
+  padding: 20px;
+}
+
+/* 表单元素间距 */
+.el-form-item {
+  margin-bottom: 20px;
+}
+
+/* 按钮样式 */
+.el-button {
+  border-radius: 20px; /* 圆角按钮 */
+  padding: 10px 20px; /* 内边距 */
+  font-weight: 500; /* 字体加粗 */
+  transition: background-color 0.3s, transform 0.2s; /* 背景色和缩放过渡 */
+}
+
+.el-button:hover {
+  background-color: #0055ff; /* 鼠标悬停时的背景色 */
+  transform: translateY(-2px); /* 鼠标悬停时上移 */
+}
+
+/* 其他样式保持不变 */
+/* ... */
 </style>

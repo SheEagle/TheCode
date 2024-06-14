@@ -27,7 +27,7 @@ function deleteCollect(index, tid) {
 </script>
 
 <template>
-  <el-drawer :model-value="show" @close="emit('close')" @open="init" title="我的帖子收藏列表">
+  <el-drawer :model-value="show" @close="emit('close')" @open="init" title="My Collection List">
     <div class="collect-list">
       <light-card v-for="(item, index) in list" class="topic-card"
                   @click="router.push(`/index/topic-detail/${item.id}`)">
@@ -35,13 +35,13 @@ function deleteCollect(index, tid) {
         <div class="title">
           <b>{{ item.title }}</b>
         </div>
-        <el-link type="danger" @click.stop="deleteCollect(index, item.id)">删除</el-link>
+        <el-link type="danger" @click.stop="deleteCollect(index, item.id)">Delete</el-link>
       </light-card>
     </div>
   </el-drawer>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .collect-list {
   display: flex;
   flex-direction: column;
@@ -54,21 +54,23 @@ function deleteCollect(index, tid) {
   display: flex;
   justify-content: space-between;
 
-.title {
-  margin-left: 5px;
-  font-size: 14px;
-  flex: 1;
-  white-space: nowrap;
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  .title {
+    margin-left: 5px;
+    font-size: 14px;
+    flex: 1;
+    white-space: nowrap;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-&
-:hover {
-  scale: 1.02;
-  cursor: pointer;
-}
+  &
+  :hover {
+    scale: 1.02;
+    cursor: pointer;
+  }
 
 }
 </style>
+
+

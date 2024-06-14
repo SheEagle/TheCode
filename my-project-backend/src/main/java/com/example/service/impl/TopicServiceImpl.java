@@ -2,6 +2,7 @@ package com.example.service.impl;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -19,13 +20,15 @@ import com.example.service.TopicService;
 import com.example.utils.CacheUtils;
 import com.example.utils.Const;
 import com.example.utils.FlowUtils;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
-import java.sql.Wrapper;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -147,11 +150,24 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     }
 
     @Override
+    public void deleteTopic(int tid, int uid) {
+        // 使用LambdaQueryWrapper构建查询条件
+        LambdaQueryWrapper<Topic> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Topic::getId, tid).eq(Topic::getUid, uid);
+
+        // 使用remove方法删除记录
+        this.remove(queryWrapper);
+
+    }
+
+    @Override
     public void interact(Interact interact, boolean state) {
         String type = interact.getType();
         synchronized (type.intern()) {
             template.opsForHash().put(type, interact.toKey(), Boolean.toString(state));
             this.saveInteractSchedule(type);
+
+
         }
     }
 
@@ -258,35 +274,67 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         }).toList();
     }
 
-//    public List<CommentVO> comments(int tid, int pageNumber) {
-//        Page<TopicComment> page = Page.of(pageNumber, 10);
-//        commentMapper.selectPage(page, Wrappers.<TopicComment>query().eq("tid", tid));
-//        return page.getRecords().stream().map(dto -> {
-//            CommentVO vo = new CommentVO();
-//            BeanUtils.copyProperties(dto, vo);
-//            Optional<TopicComment> topicCommentOptional = Optional.ofNullable(commentMapper.selectOne(Wrappers.<TopicComment>query().eq("id", dto.getQuote()).orderByAsc("time")));
-//            if (topicCommentOptional.isPresent()) {
-//                TopicComment topicComment = topicCommentOptional.get();
-//                if (topicComment.getQuote() != null && topicComment.getQuote() > 0) {
-//                    JSONObject object = JSONObject.parseObject(topicComment.getContent());
-//                    StringBuilder builder = new StringBuilder();
-//                    this.shortContent(object.getJSONArray("ops"), builder, ignore -> {
-//                    });
-//                    vo.setQuote(builder.toString());
-//                } else {
-//                    vo.setQuote("此评论已被删除");
-//                }
-//            }
-//            CommentVO.User user = new CommentVO.User();
-//            this.fillUserDetailsByPrivacy(user, dto.getUid());
-//            vo.setUser(user);
-//            return vo;
-//        }).toList();
-//    }
 
     @Override
     public void deleteComment(int id, int uid) {
         commentMapper.delete(Wrappers.<TopicComment>query().eq("id", id).eq("uid", uid));
+    }
+
+    @Override
+    public void deleteCommentByAdmin(int id) {
+        // 首先，使用id查询评论内容
+        TopicComment comment = commentMapper.selectById(id);
+        if (comment == null) {
+            // 如果没有找到评论，可能已经被删除或者id无效
+            return;
+        }
+
+        String content = "";
+        int uid = comment.getUid();
+
+        try {
+            // 创建 ObjectMapper 实例
+            ObjectMapper objectMapper = new ObjectMapper();
+            // 将字符串解析为 JsonNode
+            JsonNode rootNode = objectMapper.readTree(comment.getContent());
+
+            // 遍历 ops 数组
+            StringBuilder textContent = new StringBuilder();
+            JsonNode opsNode = rootNode.path("ops");
+            if (opsNode.isArray()) {
+                for (JsonNode opNode : opsNode) {
+                    // 获取 insert 字段的值
+                    String insertValue = opNode.path("insert").asText();
+                    // 将值添加到 StringBuilder
+                    textContent.append(insertValue);
+                }
+            }
+            content = textContent.toString().trim();
+            // 打印提取的文本内容
+            System.out.println(content);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 然后，使用Wrappers构建查询条件来删除评论
+        QueryWrapper<TopicComment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", id);
+
+        // 执行删除操作
+        int isDeleted = commentMapper.delete(queryWrapper);
+        if (isDeleted > 0) {
+            // 如果删除成功，添加通知
+            String message = "管理员删除了您的评论：'" + content + "'";
+            notificationService.addNotification(
+                    uid,
+                    "您的评论被管理员移除",
+                    message,
+                    "success",
+                    "/index"
+            );
+        }
+
     }
 
     private boolean hasInteract(int tid, int uid, String type) {

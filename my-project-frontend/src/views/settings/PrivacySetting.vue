@@ -12,31 +12,32 @@ const form = reactive({
   new_password_repeat: ''
 })
 
-// 自定义验证函数，用于验证两次输入的密码是否一致
+// Custom validation function to check if the two entered passwords match
 const validatePassword = (rule, value, callback) => {
   if (value === '') {
-    callback(new Error('请再次输入密码'))
+    callback(new Error('Please enter the password again'))
   } else if (value !== form.new_password) {
-    callback(new Error("两次输入的密码不一致"))
+    callback(new Error("The two passwords entered do not match"))
   } else {
     callback()
   }
 }
 
-// 定义表单验证规则
+// Define form validation rules
 const rules = {
   password: [
-    {required: true, message: '请输入原来的密码', trigger: 'blur'}
+    {required: true, message: 'Please enter the original password', trigger: 'blur'}
   ],
   new_password: [
-    {required: true, message: '请输入新的密码', trigger: 'blur'},
-    {min: 6, max: 16, message: '密码的长度必须在6-16个字符之间', trigger: ['blur']}
+    {required: true, message: 'Please enter the new password', trigger: 'blur'},
+    {min: 6, max: 16, message: 'Password must be between 6 and 16 characters', trigger: ['blur']}
   ],
   new_password_repeat: [
-    {required: true, message: '请再次输入新的密码', trigger: 'blur'},
+    {required: true, message: 'Please enter the new password again', trigger: 'blur'},
     {validator: validatePassword, trigger: ['blur', 'change']},
   ]
 }
+
 
 // 创建表单的引用
 const formRef = ref()
@@ -104,52 +105,52 @@ function savePrivacy(type, status) {
 
 </script>
 
-
 <template>
-  <div style="margin:auto;max-width: 600px">
+  <div style="margin:auto;max-width: 700px">
     <div style="margin-top: 20px">
 
-      <!--隐私设置-->
-      <card :icon="Setting" title="隐私设置" desc="在这里设置哪些内容可以被其他人看到，请各位小伙伴注重自己的隐私"
+      <!-- Privacy Settings -->
+      <card :icon="Setting" title="Privacy Settings"
+            desc="Set what content can be seen by others here. Please pay attention to your privacy."
             v-loading="saving">
         <div class="checkbox-list">
           <el-checkbox @change="savePrivacy('phone', privacy.phone)"
-                       v-model="privacy.phone">公开展示我的手机号
+                       v-model="privacy.phone">Display my phone number publicly
           </el-checkbox>
           <el-checkbox @change="savePrivacy('email', privacy.email)"
-                       v-model="privacy.email">公开展示我的电子邮件地址
+                       v-model="privacy.email">Display my email address publicly
           </el-checkbox>
           <el-checkbox @change="savePrivacy('wx', privacy.wx)"
-                       v-model="privacy.wx">公开展示我的微信号
+                       v-model="privacy.wx">Display my WeChat ID publicly
           </el-checkbox>
           <el-checkbox @change="savePrivacy('qq', privacy.qq)"
-                       v-model="privacy.qq">公开展示我的QQ号
+                       v-model="privacy.qq">Display my QQ number publicly
           </el-checkbox>
           <el-checkbox @change="savePrivacy('gender', privacy.gender)"
-                       v-model="privacy.gender">公开展示我的性别
+                       v-model="privacy.gender">Display my gender publicly
           </el-checkbox>
         </div>
       </card>
 
-      <!--重置密码-->
+      <!-- Reset Password -->
       <card style="margin: 20px 0" :icon="Setting"
-            title="修改密码" desc="修改密码请在这里进行操作，请务必牢记您的密码">
+            title="Change Password" desc="Change your password here. Please remember your password carefully">
         <el-form :rules="rules" :model="form" ref="formRef" @validate="onValidate" label-width="100"
                  style="margin: 20px">
-          <el-form-item label="当前密码" prop="password">
+          <el-form-item label="Current Password" prop="password">
             <el-input type="password" :prefix-icon="Lock" v-model="form.password"
-                      placeholder="当前密码" maxlength="16"/>
+                      placeholder="Current Password" maxlength="16"/>
           </el-form-item>
-          <el-form-item label="新密码" prop="new_password">
+          <el-form-item label="New Password" prop="new_password">
             <el-input type="password" :prefix-icon="Lock" v-model="form.new_password"
-                      placeholder="新密码" maxlength="16"/>
+                      placeholder="New Password" maxlength="16"/>
           </el-form-item>
-          <el-form-item label="重复新密码" prop="new_password_repeat">
+          <el-form-item label="Repeat New Password" prop="new_password_repeat">
             <el-input type="password" :prefix-icon="Lock" v-model="form.new_password_repeat"
-                      placeholder="重新输入新密码" maxlength="16"/>
+                      placeholder="Repeat New Password" maxlength="16"/>
           </el-form-item>
           <div style="text-align: center">
-            <el-button @click="resetPassword" :icon="Switch" type="success">立即重置密码</el-button>
+            <el-button @click="resetPassword" :icon="Switch" type="success">Reset Password Now</el-button>
           </div>
         </el-form>
       </card>
@@ -157,10 +158,63 @@ function savePrivacy(type, status) {
   </div>
 </template>
 
+
+<!--<style scoped>-->
+<!--.checkbox-list {-->
+<!--  margin: 10px 0 0 10px;-->
+<!--  display: flex;-->
+<!--  flex-direction: column;-->
+<!--}-->
+<!--</style>-->
+
 <style scoped>
+/* 统一卡片样式 */
+.card {
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 表单样式 */
+.el-form {
+  width: 100%;
+}
+
+/* 输入框样式 */
+.el-input__inner {
+  border-radius: 4px;
+}
+
+/* 按钮样式 */
+.el-button {
+  border-radius: 4px;
+  background-color: #409eff;
+  border-color: #409eff;
+  color: white;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.el-button:hover {
+  background-color: #3a8ee6;
+  border-color: #3a8ee6;
+}
+
+/* 复选框列表样式 */
 .checkbox-list {
-  margin: 10px 0 0 10px;
+  margin: 20px;
   display: flex;
   flex-direction: column;
 }
+
+/* 复选框项样式 */
+.el-checkbox {
+  margin-bottom: 10px;
+}
+
+/* 表单项标签样式 */
+.el-form-item__label {
+  color: #606266;
+  font-size: 14px;
+}
+
 </style>

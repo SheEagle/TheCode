@@ -50,3 +50,6 @@ spring:
     password: 'minioadmin'
   weather:
     key: 47d29ad789c640c08a537200d9070ca7
+  # 阿里云通义千问配置
+  ai:
+    key: sk-0b2bb9552610430ea5a19b50ba0c2b37

@@ -66,7 +66,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = this.findAccountByNameOrEmail(username);
         if (account == null)
-            throw new UsernameNotFoundException("用户名或密码错误");
+            throw new UsernameNotFoundException("Incorrect user name or password");
         return User
                 .withUsername(username)
                 .password(account.getPassword())
@@ -85,7 +85,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     public String registerEmailVerifyCode(String type, String email, String address) {
         synchronized (address.intern()) {
             if (!this.verifyLimit(address))
-                return "请求频繁，请稍后再试";
+                return "Requests are frequent. Please try again later.";
             Random random = new Random();
             int code = random.nextInt(899999) + 100000;
             Map<String, Object> data = Map.of("type", type, "email", email, "code", code);
@@ -105,16 +105,16 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     public String registerEmailAccount(EmailRegisterVO info) {
         String email = info.getEmail();
         String code = this.getEmailVerifyCode(email);
-        if (code == null) return "请先获取验证码";
-        if (!code.equals(info.getCode())) return "验证码错误，请重新输入";
-        if (this.existsAccountByEmail(email)) return "该邮件地址已被注册";
+        if (code == null) return "Please get the verification code first";
+        if (!code.equals(info.getCode())) return "Wrong code, please check and re-enter";
+        if (this.existsAccountByEmail(email)) return "This e-mail address is already registered";
         String username = info.getUsername();
-        if (this.existsAccountByUsername(username)) return "该用户名已被他人使用，请重新更换";
+        if (this.existsAccountByUsername(username)) return "This username is already used by someone else, please change it again!";
         String password = passwordEncoder.encode(info.getPassword());
         Account account = new Account(null, info.getUsername(),
                 password, email, Const.ROLE_DEFAULT, null, new Date());
         if (!this.save(account)) {
-            return "内部错误，注册失败";
+            return "Internal error, registration failed";
         } else {
             this.deleteEmailVerifyCode(email);
             privacyMapper.insert(new AccountPrivacy(account.getId()));
@@ -141,7 +141,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         if (update) {
             this.deleteEmailVerifyCode(email);
         }
-        return update ? null : "更新失败，请联系管理员";
+        return update ? null : "Update failed, please contact the administrator";
     }
 
     /**
@@ -154,8 +154,8 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     public String resetConfirm(ConfirmResetVO info) {
         String email = info.getEmail();
         String code = this.getEmailVerifyCode(email);
-        if (code == null) return "请先获取验证码";
-        if (!code.equals(info.getCode())) return "验证码错误，请重新输入";
+        if (code == null) return "Please get the verification code first";
+        if (!code.equals(info.getCode())) return "Wrong code, please check and re-enter";
         return null;
     }
 
@@ -170,13 +170,13 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         String code = getEmailVerifyCode(email);
 
         if (code == null)
-            return "请先获取验证码";
+            return "Please get the verification code first";
         if (!code.equals(vo.getCode()))
-            return "验证码错误，请重新输入";
+            return "Wrong code, please check and re-enter";
         this.deleteEmailVerifyCode(email);
         Account account = this.findAccountByNameOrEmail(email);
         if (account != null && account.getId() != id)
-            return "该邮箱地址已被其他账号绑定，无法完成此操作！";
+            return "This email address is tied to another account!";
         this.update()
                 .set("email", email)
                 .eq("id", id)
@@ -189,14 +189,14 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     public String changePassword(int id, ChangePasswordVO vo) {
         String password = this.query().eq("id", id).one().getPassword();
         if (!passwordEncoder.matches(vo.getPassword(), password)) {
-            return "原密码错误，请重新输入！";
+            return "The original password is wrong, please re-enter it!";
         }
         boolean success = this.update().
                 eq("id", id).
                 set("password", passwordEncoder.encode(vo.getNew_password())).
                 update();
 
-        return success ? null : "发生未知错误，请联系管理员";
+        return success ? null : "An unknown error has occurred";
     }
 
 

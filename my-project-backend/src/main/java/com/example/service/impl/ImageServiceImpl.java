@@ -40,7 +40,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageStoreMapper, StoreImage> 
     @Resource
     FlowUtils flowUtils;
 
-
     SimpleDateFormat format = new SimpleDateFormat("yyyMMdd");
 
     @Override

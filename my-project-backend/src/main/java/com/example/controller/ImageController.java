@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 
 @Slf4j
@@ -23,14 +22,14 @@ public class ImageController {
     public RestBean<String> uploadAvatar(@RequestParam("file") MultipartFile file,
                                          @RequestAttribute(Const.ATTR_USER_ID) int id) throws IOException {
         if (file.getSize() > 1024 * 100)
-            return RestBean.failure(400, "头像图片不能大于100KB");
-        log.info("正在进行头像上传操作");
+            return RestBean.failure(400, "The size of avatar cannot exceed 100KB");
+        log.info("Uploading image...");
         String url = service.uploadAvatar(file, id);
         if (url != null) {
-            log.info("头像上传成功，大小：" + file.getSize());
+            log.info("Avatar uploaded successfully. Size: " + file.getSize());
             return RestBean.success(url);
         } else {
-            return RestBean.failure(400, "头像上传失败，请联系管理员");
+            return RestBean.failure(400, "Failed to upload avatar. Please contact the administrator.");
         }
     }
 
@@ -39,18 +38,17 @@ public class ImageController {
                                         @RequestAttribute(Const.ATTR_USER_ID) int id,
                                         HttpServletResponse response) throws IOException {
         if (file.getSize() > 1024 * 1024 * 5)
-            return RestBean.failure(400, "图片不能大于5MB");
-        log.info("正在进行图片上传操作");
+            return RestBean.failure(400, "The size of image cannot exceed 5MB");
+        log.info("Uploading image...");
         String url = service.uploadImage(file, id);
         if (url != null) {
-            log.info("图片上传成功，大小：" + file.getSize());
+            log.info("Image uploaded successfully. Size: " + file.getSize());
             return RestBean.success(url);
         } else {
             response.setStatus(400);
-            return RestBean.failure(400, "图片上传失败，请联系管理员");
+            return RestBean.failure(400, "Failed to upload image. Please contact the administrator.");
         }
 
     }
-
 
 }

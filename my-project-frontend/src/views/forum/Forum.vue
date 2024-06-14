@@ -14,7 +14,7 @@ get('/api/forum/types', data => {
 
 <template>
   <div>
-    <router-view v-slot="{ Component }">
+    <router-view v-slot="{ Component }" :key="$route.fullPath">
       <transition name="el-fade-in-linear" mode="out-in">
         <keep-alive include="TopicList">
           <component :is="Component"/>

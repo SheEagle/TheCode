@@ -57,7 +57,7 @@ public class AccountController {
     public RestBean<Void> saveDetails(@RequestAttribute(Const.ATTR_USER_ID) int id,
                                       @RequestBody @Valid DetailsSaveVO vo) {
         boolean success = detailsService.saveAccountDetails(id, vo);
-        return success ? RestBean.success() : RestBean.failure(400, "此用户名已被其他用户使用，请更换！");
+        return success ? RestBean.success() : RestBean.failure(400, "This username has been already used by another user. Please choose a different one!");
 
     }
 

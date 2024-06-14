@@ -54,6 +54,11 @@ const router = createRouter({
                     path: 'privacy-setting',
                     name: 'privacy-setting',
                     component: () => import('@/views/settings/PrivacySetting.vue')
+                },
+                {
+                    path: 'ai-chat',
+                    name: 'ai-chat',
+                    component: () => import('@/views/chat/AIChat.vue')
                 }
             ]
         }

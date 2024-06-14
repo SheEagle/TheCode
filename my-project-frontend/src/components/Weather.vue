@@ -7,7 +7,7 @@ defineProps({
 <template>
   <!-- 天气信息容器 -->
   <div style="height: 160px" v-loading="!data.success"
-       element-loading-text="正在加载天气信息...">
+       element-loading-text="loading weather information...">
     <!-- 天气信息内容 -->
     <div style="display: flex;justify-content: space-between;margin: 10px 20px"
          v-if="data.success">

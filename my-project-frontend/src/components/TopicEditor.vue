@@ -20,7 +20,7 @@ const props = defineProps({
   defaultTitle: {default: '', type: String}, // 默认标题
   defaultText: {default: '', type: String}, // 默认文本内容
   defaultType: {default: null, type: Number}, // 默认帖子类型
-  submitButton: {default: '立即发表主题', type: String}, // 提交按钮的文本
+  submitButton: {default: 'Post Topic Now', type: String}, // 提交按钮的文本
   submit: { // 提交按钮点击事件，默认为发表主题的函数
     default: (editor, success) => {
       post('/api/forum/create-topic', {
@@ -28,7 +28,7 @@ const props = defineProps({
         title: editor.title,
         content: editor.text
       }, () => {
-        ElMessage.success("帖子发表成功！");
+        ElMessage.success("Post published successfully!");
         success();
       });
     },
@@ -164,7 +164,7 @@ const editorOption = {
 </script>
 
 <template>
-  <!-- 编辑器主体 -->
+  <!-- Editor Main Body -->
   <div>
     <el-drawer :model-value="show"
                direction="btt"
@@ -173,18 +173,20 @@ const editorOption = {
                :size="650"
                @close="emit('close')">
 
-      <!-- 头部标题 -->
+      <!-- Header Title -->
       <template #header>
         <div>
-          <div style="font-weight: bold">发表新的帖子</div>
-          <div style="font-size: 13px">发表内容之前，请遵守相关法律法规，不要出现骂人等爆粗口的不文明行为。</div>
+          <div style="font-weight: bold">Post a New Topic</div>
+          <div style="font-size: 13px">Before posting content, please comply with relevant laws and regulations, and
+            avoid using abusive language or other uncivilized behavior.
+          </div>
         </div>
       </template>
 
-      <!-- 选择帖子类型和标题输入 -->
-      <div style="display: flex;gap: 10px">
+      <!-- Select Topic Type and Title Input -->
+      <div style="display: flex; gap: 10px">
         <div style="width: 150px">
-          <el-select placeholder="选择主题类型..." value-key="id" v-model="editor.type"
+          <el-select placeholder="Select topic type..." value-key="id" v-model="editor.type"
                      :disabled="!store.forum.types.length">
             <el-option v-for="item in store.forum.types.filter(type => type.id > 0)" :value="item" :label="item.name">
               <div>
@@ -196,30 +198,32 @@ const editorOption = {
         </div>
 
         <div style="flex: 1">
-          <el-input v-model="editor.title" placeholder="请输入帖子标题..." :prefix-icon="Document"
+          <el-input v-model="editor.title" placeholder="Enter topic title..." :prefix-icon="Document"
                     style="height: 100%" maxlength="30"/>
         </div>
       </div>
 
-      <!-- 帖子类型描述 -->
-      <div style="margin-top: 5px;font-size: 13px;color: grey">
+      <!-- Topic Type Description -->
+      <div style="margin-top: 5px; font-size: 13px; color: grey">
         <color-dot :color="editor.type ? editor.type.color : '#dedede'"/>
-        <span style="margin-left: 5px">{{ editor.type ? editor.type.description : '请在上方选择一个帖子类型' }}</span>
+        <span style="margin-left: 5px">{{
+            editor.type ? editor.type.description : 'Please select a topic type above'
+          }}</span>
       </div>
 
-      <!-- 富文本编辑器 -->
-      <div style="margin-top: 10px;height: 440px;overflow: hidden;border-radius: 5px"
+      <!-- Rich Text Editor -->
+      <div style="margin-top: 10px; height: 440px; overflow: hidden; border-radius: 5px"
            v-loading="editor.uploading"
-           element-loading-text="正在上传图片，请稍后...">
+           element-loading-text="Uploading image, please wait...">
         <quill-editor v-model:content="editor.text" style="height: calc(100% - 45px)"
                       content-type="delta" ref="refEditor"
-                      placeholder="今天想分享点什么呢？" :options="editorOption"/>
+                      placeholder="What would you like to share today?" :options="editorOption"/>
       </div>
 
-      <!-- 字数统计和提交按钮 -->
-      <div style="display: flex;justify-content: space-between;margin-top: 5px">
-        <div style="color: grey;font-size: 13px">
-          当前字数 {{ contentLength }}（最大支持20000字）
+      <!-- Word Count and Submit Button -->
+      <div style="display: flex; justify-content: space-between; margin-top: 5px">
+        <div style="color: grey; font-size: 13px">
+          Word count: {{ contentLength }} (maximum 20,000 characters)
         </div>
         <div>
           <el-button type="success" :icon="Check" @click="submitTopic" plain>{{ submitButton }}</el-button>
@@ -238,7 +242,23 @@ const editorOption = {
   border-radius: 10px 10px 0 0;
 }
 
+/* 富文本编辑器样式 */
+:deep(.quill) {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* 提交按钮样式 */
+:deep(.el-button) {
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
 :deep(.el-drawer__header) {
   margin: 0;
 }
 </style>
+
+

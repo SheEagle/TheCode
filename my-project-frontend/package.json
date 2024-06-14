@@ -13,12 +13,14 @@
     "@vueuse/core": "^10.3.0",
     "axios": "^1.4.0",
     "element-plus": "^2.3.9",
+    "marked": "^13.0.0",
     "pinia": "^2.1.7",
     "quill-delta-to-html": "^0.12.1",
     "quill-image-resize-vue": "^1.0.4",
     "quill-image-super-solution-module": "^2.0.1",
     "vue": "^3.3.4",
-    "vue-router": "^4.2.4"
+    "vue-router": "^4.2.4",
+    "vuetify": "^3.6.0-beta.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",

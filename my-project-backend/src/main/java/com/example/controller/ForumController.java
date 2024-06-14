@@ -35,7 +35,7 @@ public class ForumController {
     @GetMapping("/weather")
     public RestBean<WeatherVO> weather(double longitude, double latitude) {
         WeatherVO vo = service.fetchWeather(longitude, latitude);
-        return vo == null ? RestBean.failure(400, "获取地理位置与天气失败，请联系管理员") : RestBean.success(vo);
+        return vo == null ? RestBean.failure(400, "Failed to retrieve location and weather information. Please contact the administrator.") : RestBean.success(vo);
 
     }
 
@@ -95,6 +95,15 @@ public class ForumController {
         return utils.messageHandle(() -> topicService.updateTopic(id, vo));
     }
 
+
+    @PostMapping("/delete-topic")
+    public RestBean<Void> deleteTopic(@RequestParam @Min(0) int id,
+                                      @RequestAttribute(Const.ATTR_USER_ID) int uid) {
+        topicService.deleteTopic(id, uid);
+        return RestBean.success();
+    }
+
+
     @PostMapping("/add-comment")
     public RestBean<Void> addComment(@Valid @RequestBody AddCommentVO vo,
                                      @RequestAttribute(Const.ATTR_USER_ID) int id) {
@@ -109,9 +118,20 @@ public class ForumController {
 
     @GetMapping("/delete-comment")
     public RestBean<Void> deleteComment(@RequestParam @Min(0) int id,
-                                        @RequestAttribute(Const.ATTR_USER_ID) int uid) {
-        topicService.deleteComment(id, uid);
+                                        @RequestAttribute(Const.ATTR_USER_ID) int uid,
+                                        @RequestAttribute(Const.ATTR_USER_ROLE) String role) {
+        if (this.isAdminAccount(role)) {
+            topicService.deleteCommentByAdmin(id);
+        } else {
+            topicService.deleteComment(id, uid);
+        }
         return RestBean.success();
+    }
+
+
+    private boolean isAdminAccount(String role) {
+        role = role.substring(5);
+        return Const.ROLE_ADMIN.equals(role);
     }
 
 }

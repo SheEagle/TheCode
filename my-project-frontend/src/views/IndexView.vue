@@ -9,12 +9,13 @@ import {
   ChatDotSquare, Check, Collection, DataLine,
   Document, Files,
   Location, Lock, Message, Monitor,
-  Notification, Operation,
+  Operation,
   Position,
-  School, Search,
-  Umbrella, User
+  Search,
+  User
 } from "@element-plus/icons-vue";
 import LightCard from "@/components/LightCard.vue";
+import SiteFooter from "@/components/Footer.vue";
 
 const store = useStore()
 const loading = ref(true)
@@ -49,15 +50,25 @@ function deleteAllNotification() {
 function userLogout() {
   logout(() => router.push("/"))
 }
+
+
+const isAsideCollapsed = ref(false);
+const asideWidth = ref("230px");
+
+const toggleAside = () => {
+  isAsideCollapsed.value = !isAsideCollapsed.value;
+  asideWidth.value = isAsideCollapsed.value ? "64px" : "230px";
+};
 </script>
 
 <template>
-  <div class="main-content" v-loading="loading" element-loading-text="正在进入，请稍后...">
+  <div class="main-content" v-loading="loading" element-loading-text="loading...">
     <el-container style="height: 100%" v-if="!loading">
+      <!--上边栏-->
       <el-header class="main-content-header">
-        <el-image class="logo" src="https://element-plus.org/images/element-plus-logo.svg"/>
+        <el-image class="logo" src="/src/assets/the.png" style="height: 50px;width: 100px"/>
         <div style="flex: 1;padding: 0 20px;text-align: center">
-          <el-input v-model="searchInput.text" style="width: 100%;max-width: 500px" placeholder="搜索论坛相关内容...">
+          <el-input v-model="searchInput.text" style="width: 100%;max-width: 500px" placeholder="Please Search...">
             <template #prefix>
               <el-icon>
                 <Search/>
@@ -65,14 +76,36 @@ function userLogout() {
             </template>
             <template #append>
               <el-select style="width: 120px" v-model="searchInput.type">
-                <el-option value="1" label="帖子广场"/>
-                <el-option value="2" label="校园活动"/>
-                <el-option value="3" label="表白墙"/>
-                <el-option value="4" label="教务通知"/>
+                <el-option value="1" label="Posts"/>
+                <el-option value="2" label="ArtWorks"/>
               </el-select>
             </template>
           </el-input>
         </div>
+        <!--<div class="search-container">-->
+        <!--  <div class="search-box">-->
+        <!--    <el-input v-model="searchInput.text" style="width: 100%;max-width: 500px" placeholder="Please Search...">-->
+        <!--      <template #prefix>-->
+        <!--        <el-icon>-->
+        <!--          <Search/>-->
+        <!--        </el-icon>-->
+        <!--      </template>-->
+        <!--      <template #append>-->
+        <!--        <el-select style="width: 120px" v-model="searchInput.type">-->
+        <!--          <el-option value="1" label="Posts"/>-->
+        <!--          <el-option value="2" label="ArtWorks"/>-->
+        <!--        </el-select>-->
+        <!--      </template>-->
+        <!--    </el-input>-->
+        <!--    <el-button @click="searchPosts" type="primary">Search</el-button>-->
+        <!--  </div>-->
+        <!--  <div class="results-box">-->
+        <!--    <el-card v-for="post in posts" :key="post.id" class="result-card">-->
+        <!--      <h3>{{ post.title }}</h3>-->
+        <!--      <p>{{ post.content }}</p>-->
+        <!--    </el-card>-->
+        <!--  </div>-->
+        <!--</div>-->
         <div class="user-info">
           <el-popover placement="bottom" :width="350" trigger="click">
             <template #reference>
@@ -81,12 +114,13 @@ function userLogout() {
                   <el-icon>
                     <Bell></Bell>
                   </el-icon>
-                  <div style="font-size: 10px">消息</div>
+                  <div style="font-size: 10px">Notifications</div>
                 </div>
               </el-badge>
             </template>
 
-            <el-empty :image-size="80" description="暂时没有未读消息哦" v-if="!notification.length"></el-empty>
+            <el-empty :image-size="80" description="No new notifications right now"
+                      v-if="!notification.length"></el-empty>
             <el-scrollbar :max-height="500" v-else>
               <light-card v-for="item in notification" class="notification-item"
                           @click="confirmNotification(item.id,item.url)">
@@ -103,7 +137,7 @@ function userLogout() {
 
             <div style="margin-top: 10px">
               <el-button size="small" type="info" :icon="Check" @click="deleteAllNotification"
-                         style="width: 100%" plain>清除全部未读消息
+                         style="width: 100%" plain>Clear all
               </el-button>
             </div>
           </el-popover>
@@ -118,28 +152,32 @@ function userLogout() {
                 <el-icon>
                   <Operation/>
                 </el-icon>
-                个人设置
+                Personal Settings
               </el-dropdown-item>
               <el-dropdown-item>
                 <el-icon>
                   <Message/>
                 </el-icon>
-                消息列表
+                Notifications
               </el-dropdown-item>
               <el-dropdown-item @click="userLogout" divided>
                 <el-icon>
                   <Back/>
                 </el-icon>
-                退出登录
+                Logout
               </el-dropdown-item>
             </template>
           </el-dropdown>
         </div>
       </el-header>
+
+      <!--左边栏-->
       <el-container>
-        <el-aside width="230px">
+        <el-aside :width="asideWidth">
+          <el-button @click="toggleAside" icon="el-icon-menu"></el-button>
           <el-scrollbar style="height: calc(100vh - 55px)">
             <el-menu
+                :collapse="isAsideCollapsed"
                 router
                 :default-active="$route.path"
                 :default-openeds="['1', '2', '3']"
@@ -149,111 +187,86 @@ function userLogout() {
                   <el-icon>
                     <Location/>
                   </el-icon>
-                  <span><b>校园论坛</b></span>
+                  <span><b>Ultraviolet</b></span>
                 </template>
                 <el-menu-item index="/index">
                   <template #title>
                     <el-icon>
                       <ChatDotSquare/>
                     </el-icon>
-                    帖子广场
+                    Posts
                   </template>
                 </el-menu-item>
-                <el-menu-item>
+                <el-menu-item index="/index/ai-chat">
                   <template #title>
                     <el-icon>
                       <Bell/>
                     </el-icon>
-                    失物招领
-                  </template>
-                </el-menu-item>
-                <el-menu-item>
-                  <template #title>
-                    <el-icon>
-                      <Notification/>
-                    </el-icon>
-                    校园活动
-                  </template>
-                </el-menu-item>
-                <el-menu-item>
-                  <template #title>
-                    <el-icon>
-                      <Umbrella/>
-                    </el-icon>
-                    表白墙
-                  </template>
-                </el-menu-item>
-                <el-menu-item>
-                  <template #title>
-                    <el-icon>
-                      <School/>
-                    </el-icon>
-                    海文考研
-                    <el-tag style="margin-left: 10px" size="small">合作机构</el-tag>
+                    Chat
                   </template>
                 </el-menu-item>
               </el-sub-menu>
-              <el-sub-menu index="2">
-                <template #title>
-                  <el-icon>
-                    <Position/>
-                  </el-icon>
-                  <span><b>探索与发现</b></span>
-                </template>
-                <el-menu-item>
-                  <template #title>
-                    <el-icon>
-                      <Document/>
-                    </el-icon>
-                    成绩查询
-                  </template>
-                </el-menu-item>
-                <el-menu-item>
-                  <template #title>
-                    <el-icon>
-                      <Files/>
-                    </el-icon>
-                    班级课程表
-                  </template>
-                </el-menu-item>
-                <el-menu-item>
-                  <template #title>
-                    <el-icon>
-                      <Monitor/>
-                    </el-icon>
-                    教务通知
-                  </template>
-                </el-menu-item>
-                <el-menu-item>
-                  <template #title>
-                    <el-icon>
-                      <Collection/>
-                    </el-icon>
-                    在线图书馆
-                  </template>
-                </el-menu-item>
-                <el-menu-item>
-                  <template #title>
-                    <el-icon>
-                      <DataLine/>
-                    </el-icon>
-                    预约教室
-                  </template>
-                </el-menu-item>
-              </el-sub-menu>
+              <!--<el-sub-menu index="2">-->
+              <!--  <template #title>-->
+              <!--    <el-icon>-->
+              <!--      <Position/>-->
+              <!--    </el-icon>-->
+              <!--    <span><b>Imagination Markets</b></span>-->
+              <!--  </template>-->
+              <!--  <el-menu-item>-->
+              <!--    <template #title>-->
+              <!--      <el-icon>-->
+              <!--        <Document/>-->
+              <!--      </el-icon>-->
+              <!--      Music-->
+              <!--    </template>-->
+              <!--  </el-menu-item>-->
+              <!--  <el-menu-item>-->
+              <!--    <template #title>-->
+              <!--      <el-icon>-->
+              <!--        <Files/>-->
+              <!--      </el-icon>-->
+              <!--      Painting-->
+              <!--    </template>-->
+              <!--  </el-menu-item>-->
+              <!--  <el-menu-item>-->
+              <!--    <template #title>-->
+              <!--      <el-icon>-->
+              <!--        <Monitor/>-->
+              <!--      </el-icon>-->
+              <!--      Photography-->
+              <!--    </template>-->
+              <!--  </el-menu-item>-->
+              <!--  <el-menu-item>-->
+              <!--    <template #title>-->
+              <!--      <el-icon>-->
+              <!--        <Collection/>-->
+              <!--      </el-icon>-->
+              <!--      Books-->
+              <!--    </template>-->
+              <!--  </el-menu-item>-->
+              <!--  <el-menu-item>-->
+              <!--    <template #title>-->
+              <!--      <el-icon>-->
+              <!--        <DataLine/>-->
+              <!--      </el-icon>-->
+              <!--      Scripts-->
+              <!--    </template>-->
+              <!--  </el-menu-item>-->
+              <!--</el-sub-menu>-->
               <el-sub-menu index="3">
                 <template #title>
                   <el-icon>
                     <Operation/>
                   </el-icon>
-                  <span><b>个人设置</b></span>
+                  <span><b>Settings</b></span>
                 </template>
                 <el-menu-item index="/index/user-setting">
                   <template #title>
                     <el-icon>
                       <User/>
                     </el-icon>
-                    个人信息设置
+                    Account
                   </template>
                 </el-menu-item>
                 <el-menu-item index="/index/privacy-setting">
@@ -261,7 +274,7 @@ function userLogout() {
                     <el-icon>
                       <Lock/>
                     </el-icon>
-                    账号安全设置
+                    Security
                   </template>
                 </el-menu-item>
               </el-sub-menu>
@@ -270,7 +283,7 @@ function userLogout() {
         </el-aside>
         <el-main class="main-content-page">
           <el-scrollbar style="height: calc(100vh - 55px)">
-            <router-view v-slot="{ Component }">
+            <router-view v-slot="{ Component }" :key="$route.fullPath">
               <transition name="el-fade-in-linear" mode="out-in">
                 <component :is="Component" style="height: 100%"/>
               </transition>
@@ -278,11 +291,56 @@ function userLogout() {
           </el-scrollbar>
         </el-main>
       </el-container>
+      <site-footer/>
     </el-container>
   </div>
 </template>
 
+
+
 <style lang="less" scoped>
+body {
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+.el-card {
+  border-radius: 10px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.el-menu-item.is-active {
+  background: linear-gradient(to right, rgba(106, 17, 203, 0.50), rgba(37, 117, 252, 0.50)) !important;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  color: #fff;
+}
+
+.main-content-header {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border-bottom: none;
+}
+
+.main-content-header .logo,
+.main-content-header .user-info .profile {
+  color: #fff;
+}
+
+.main-content-header .user-info .notification:hover,
+.main-content-header .user-info .el-avatar:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.main-content-header .el-input__inner {
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
 
 .notification-item {
   transition: .3s;
@@ -325,6 +383,7 @@ function userLogout() {
   display: flex;
   align-items: center;
   box-sizing: border-box;
+  background: linear-gradient(135deg, rgba(106, 17, 203, 0.42), rgba(37, 117, 252, 0.42));
 
   .logo {
     height: 32px;
@@ -355,5 +414,66 @@ function userLogout() {
       }
     }
   }
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+  width: 100%;
+}
+
+//.main-content-header {
+//  display: flex;
+//  align-items: center;
+//  background-color: #fff;
+//  padding: 0 20px;
+//}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+//.notification {
+//  display: flex;
+//  flex-direction: column;
+//  align-items: center;
+//}
+
+//.profile {
+//  margin-right: 15px;
+//  text-align: right;
+//}
+
+.el-scrollbar {
+  height: 100%;
+}
+
+.input-box {
+  display: flex;
+  padding: 10px;
+  background-color: #fff;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  padding: 10px 15px;
+  margin-left: 10px;
+  margin-right: 15px;
+  background-color: #625DE5A5;
+  border: none;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 95%;
+  height: 10px;
 }
 </style>

@@ -23,6 +23,8 @@ public interface TopicService {
 
     TopicDetailsVO getTopic(int tid, int uid);
 
+    void deleteTopic(int tid, int uid);
+
     void interact(Interact interact, boolean state);
 
     List<TopicPreviewVO> listTopicCollects(int uid);
@@ -34,6 +36,8 @@ public interface TopicService {
     List<CommentVO> comments(int tid, int pageNumber);
 
     void deleteComment(int id, int uid);
+
+    void deleteCommentByAdmin(int id);
 
 
 }
