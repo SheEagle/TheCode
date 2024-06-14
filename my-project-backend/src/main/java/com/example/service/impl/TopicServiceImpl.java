@@ -1,5 +1,6 @@
 package com.example.service.impl;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -29,6 +30,12 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -88,17 +95,69 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         String key = Const.FORUM_TOPIC_CREATE_COUNTER + uid;
         if (!flowUtils.limitPeriodCounterCheck(key, 3, 3600))
             return "发文频繁，请稍后再试";
-        Topic topic = new Topic();
-        BeanUtils.copyProperties(vo, topic);
-        topic.setContent(vo.getContent().toJSONString());
-        topic.setUid(uid);
-        topic.setTime(new Date());
-        if (this.save(topic)) {
-            cacheUtils.deleteCachePattern(Const.FORUM_TOPIC_PREVIEW_CACHE + "*");
-            return null;
-        } else {
-            return "内部错误，请联系管理员！";
+        String content = String.valueOf(vo.getContent());
+        try {
+            // 构建请求 URL
+            String apiUrl = "https://api.pearktrue.cn/api/sensitivewords/?text=" + URLEncoder.encode(content, StandardCharsets.UTF_8);
+            URL url = new URL(apiUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            // 发送请求并获取响应
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+            String line;
+            StringBuilder response = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+
+            // 判断连接是否成功
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                // 解析响应
+                JSONObject jsonResponse = JSON.parseObject(response.toString());
+                int code = jsonResponse.getIntValue("code");
+                String msg = jsonResponse.getString("msg");
+
+                // 根据返回的 code 判断是否有敏感词
+                if (code == 200) {
+                    return "帖子包含敏感词，发表失败";
+                } else if (code == 201) {
+                    // 没有敏感词，继续发帖
+                    Topic topic = new Topic();
+                    BeanUtils.copyProperties(vo, topic);
+                    topic.setContent(vo.getContent().toJSONString());
+                    topic.setUid(uid);
+                    topic.setTime(new Date());
+                    if (this.save(topic)) {
+                        cacheUtils.deleteCachePattern(Const.FORUM_TOPIC_PREVIEW_CACHE + "*");
+                        return null;
+                    } else {
+                        return "内部错误，请联系管理员！";
+                    }
+                } else {
+                    // 其他错误码处理
+                    return "敏感词检测失败，请稍后再试";
+                }
+            } else {
+                // HTTP 请求非200响应的情况
+                return "敏感词检测服务暂不可用，请稍后再试";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "敏感词检测过程中发生错误，请稍后再试";
         }
+//        Topic topic = new Topic();
+//        BeanUtils.copyProperties(vo, topic);
+//        topic.setContent(vo.getContent().toJSONString());
+//        topic.setUid(uid);
+//        topic.setTime(new Date());
+//        if (this.save(topic)) {
+//            cacheUtils.deleteCachePattern(Const.FORUM_TOPIC_PREVIEW_CACHE + "*");
+//            return null;
+//        } else {
+//            return "内部错误，请联系管理员！";
+//        }
     }
 
     @Override
@@ -204,36 +263,107 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         if (!textLimitCheck(JSONObject.parseObject(vo.getContent()), 2000))
             return "评论内容太长，发表失败";
         String key = Const.FORUM_TOPIC_COMMENT_COUNTER + uid;
+        String commentContent = vo.getContent();
         if (!flowUtils.limitPeriodCounterCheck(key, 2, 60))
             return "发表评论频繁，请稍后再试";
-        TopicComment comment = new TopicComment();
-        comment.setUid(uid);
-        BeanUtils.copyProperties(vo, comment);
-        comment.setTime(new Date());
-        commentMapper.insert(comment);
-        Topic topic = baseMapper.selectById(vo.getTid());
-        Account account = accountMapper.selectById(uid);
-        if (vo.getQuote() > 0) {
-            TopicComment com = commentMapper.selectById(vo.getQuote());
-            if (!Objects.equals(account.getId(), com.getUid())) {
-                notificationService.addNotification(
-                        com.getUid(),
-                        "您有新的帖子评论回复",
-                        account.getUsername() + "回复了你发表的评论，快去看看吧",
-                        "success",
-                        "/index/topic-detail/" + com.getTid()
-                );
+        try {
+            // 构建请求 URL
+            String apiUrl = "https://api.pearktrue.cn/api/sensitivewords/?text=" + URLEncoder.encode(commentContent, StandardCharsets.UTF_8);
+            URL url = new URL(apiUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            // 发送请求并获取响应
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+            String line;
+            StringBuilder response = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
             }
-        } else if (!Objects.equals(account.getId(), topic.getUid())) {
-            notificationService.addNotification(
-                    topic.getUid(),
-                    "您有新的帖子回复",
-                    account.getUsername() + "回复了你发表的主题：" + topic.getTitle() + "，快去看看吧！",
-                    "success",
-                    "/index/topic-detail/" + topic.getId()
-            );
+            reader.close();
+
+            // 判断连接是否成功
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                // 解析响应
+                JSONObject jsonResponse = JSON.parseObject(response.toString());
+                int code = jsonResponse.getIntValue("code");
+                String msg = jsonResponse.getString("msg");
+
+                // 根据返回的 code 判断是否有敏感词
+                if (code == 200) {
+                    return "评论包含敏感词，发表失败";
+                } else if (code == 201) {
+                    // 没有敏感词，继续创建评论
+                    // 你的创建评论逻辑...
+                    TopicComment comment = new TopicComment();
+                    comment.setUid(uid);
+                    BeanUtils.copyProperties(vo, comment);
+                    comment.setTime(new Date());
+                    commentMapper.insert(comment);
+                    Topic topic = baseMapper.selectById(vo.getTid());
+                    Account account = accountMapper.selectById(uid);
+                    if (vo.getQuote() > 0) {
+                        TopicComment com = commentMapper.selectById(vo.getQuote());
+                        if (!Objects.equals(account.getId(), com.getUid())) {
+                            notificationService.addNotification(
+                                    com.getUid(),
+                                    "您有新的帖子评论回复",
+                                    account.getUsername() + "回复了你发表的评论，快去看看吧",
+                                    "success",
+                                    "/index/topic-detail/" + com.getTid()
+                            );
+                        }
+                    } else if (!Objects.equals(account.getId(), topic.getUid())) {
+                        notificationService.addNotification(
+                                topic.getUid(),
+                                "您有新的帖子回复",
+                                account.getUsername() + "回复了你发表的主题：" + topic.getTitle() + "，快去看看吧！",
+                                "success",
+                                "/index/topic-detail/" + topic.getId()
+                        );
+                    }
+                    return null;
+                } else {
+                    // 其他错误码处理
+                    return "敏感词检测失败，请稍后再试";
+                }
+            } else {
+                // HTTP 请求非200响应的情况
+                return "敏感词检测服务暂不可用，请稍后再试";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "敏感词检测过程中发生错误，请稍后再试";
         }
-        return null;
+
+//        TopicComment comment = new TopicComment();
+//        comment.setUid(uid);
+//        BeanUtils.copyProperties(vo, comment);
+//        comment.setTime(new Date());
+//        commentMapper.insert(comment);
+//        Topic topic = baseMapper.selectById(vo.getTid());
+//        Account account = accountMapper.selectById(uid);
+//        if (vo.getQuote() > 0) {
+//            TopicComment com = commentMapper.selectById(vo.getQuote());
+//            if (!Objects.equals(account.getId(), com.getUid())) {
+//                notificationService.addNotification(
+//                        com.getUid(),
+//                        "您有新的帖子评论回复",
+//                        account.getUsername() + "回复了你发表的评论，快去看看吧",
+//                        "success",
+//                        "/index/topic-detail/" + com.getTid()
+//                );
+//            }
+//        } else if (!Objects.equals(account.getId(), topic.getUid())) {
+//            notificationService.addNotification(
+//                    topic.getUid(),
+//                    "您有新的帖子回复",
+//                    account.getUsername() + "回复了你发表的主题：" + topic.getTitle() + "，快去看看吧！",
+//                    "success",
+//                    "/index/topic-detail/" + topic.getId()
+//            );
+//        }
+//        return null;
     }
 
     @Override
