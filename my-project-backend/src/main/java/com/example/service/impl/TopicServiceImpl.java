@@ -281,7 +281,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     }
 
     @Override
-    public void deleteCommentByAdmin(int id) {
+    public void deleteCommentByAdmin(int id, String rule) {
         // 首先，使用id查询评论内容
         TopicComment comment = commentMapper.selectById(id);
         if (comment == null) {
@@ -328,9 +328,9 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
             String message = "管理员删除了您的评论：'" + content + "'";
             notificationService.addNotification(
                     uid,
-                    "您的评论被管理员移除",
+                    "您的评论疑似含有以下内容" + rule + ",已被管理员移除",
                     message,
-                    "success",
+                    "danger",
                     "/index"
             );
         }

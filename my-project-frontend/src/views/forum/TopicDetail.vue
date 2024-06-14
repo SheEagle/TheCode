@@ -85,11 +85,47 @@ function onCommentAdd() {
   loadComments(Math.floor(++topic.data.comments / 10) + 1)
 }
 
-function deleteComment(id) {
-  get(`api/forum/delete-comment?id=${id}`, () => {
-    ElMessage.success('删除评论成功！')
-    loadComments(topic.page)
-  })
+// function deleteComment(id) {
+//   get(`api/forum/delete-comment?id=${id}`, () => {
+//     ElMessage.success('删除评论成功！')
+//     loadComments(topic.page)
+//   })
+// }
+const confirmDialogVisible = ref(false);
+const adminDialogVisible = ref(false);
+const selectedRule = ref('');
+const commentIdToDelete = ref(null);
+
+function confirmDeleteComment(id) {
+  console.log('User delete comment:', id); // 添加日志
+  commentIdToDelete.value = id;
+  confirmDialogVisible.value = true;
+}
+
+function deleteComment() {
+  get(`/api/forum/delete-comment?id=${commentIdToDelete.value}`, () => {
+    ElMessage.success('删除评论成功！');
+    loadComments(topic.page);
+    confirmDialogVisible.value = false;
+  });
+}
+
+function adminDeleteComment(id) {
+  console.log('Admin delete comment:', id); // 添加日志
+  commentIdToDelete.value = id;
+  adminDialogVisible.value = true;
+}
+
+function confirmAdminDeleteComment() {
+  post(`/api/forum/admin-delete-comment`, {
+    id: commentIdToDelete.value,
+    rule: selectedRule.value
+  }, () => {
+    ElMessage.success('管理员删除评论成功！');
+    loadComments(topic.page);
+    adminDialogVisible.value = false;
+    selectedRule.value = '';
+  });
 }
 
 
@@ -167,6 +203,7 @@ function deleteComment(id) {
         </div>
       </div>
     </div>
+
     <!--评论展示-->
     <transition name="el-fade-in-linear" mode="out-in">
       <div v-if="topic.comments">
@@ -207,13 +244,22 @@ function deleteComment(id) {
               <el-link :icon="ChatSquare" @click="comment.show=true;comment.quote=item"
                        type="info">&nbsp;Reply
               </el-link>
+
               <!--<el-link :icon="Delete" type="danger" v-if="item.user.id===store.user.id"-->
               <!--         style="margin-left: 20px" @click="deleteComment(item.id)">&nbsp;Delete-->
               <!--</el-link>-->
+              <!--<el-link :icon="Delete" type="danger" v-if="item.user.id === store.user.id || store.isAdmin"-->
+              <!--         style="margin-left: 20px" @click="deleteComment(item.id)">&nbsp;Delete-->
+              <!--</el-link>-->
 
-              <el-link :icon="Delete" type="danger" v-if="item.user.id === store.user.id || store.isAdmin"
-                       style="margin-left: 20px" @click="deleteComment(item.id)">&nbsp;Delete
+              <el-link :icon="Delete" type="danger" v-if="item.user.id === store.user.id"
+                       style="margin-left: 20px" @click="confirmDeleteComment(item.id)">&nbsp;Delete
               </el-link>
+              <el-link :icon="Delete" type="warning"
+                       v-if="item.user.id !== store.user.id && store.user.role === 'admin'"
+                       style="margin-left: 20px" @click="adminDeleteComment(item.id)">&nbsp;Admin Delete
+              </el-link>
+
             </div>
           </div>
         </div>
@@ -240,7 +286,34 @@ function deleteComment(id) {
       </el-icon>
 
     </div>
+
+
   </div>
+
+  <!-- 用户删除确认对话框 -->
+  <el-dialog title="确认删除" v-model="confirmDialogVisible" width="30%">
+    <span>您确认要删除这条评论吗？</span>
+    <span slot="footer" class="dialog-footer">
+                  <el-button @click="confirmDialogVisible = false">取消</el-button>
+                  <el-button type="primary" @click="deleteComment">确认</el-button>
+                </span>
+  </el-dialog>
+
+  <!-- 管理员删除对话框 -->
+  <el-dialog title="管理员删除评论" v-model="adminDialogVisible" width="30%">
+    <span>请选择评论违反的规则：</span>
+    <el-radio-group v-model="selectedRule">
+      <el-radio label="含有暴力、色情等内容">含有暴力、色情内容</el-radio>
+      <el-radio label="内含广告">含有广告</el-radio>
+      <el-radio label="恶意灌水或引战">恶意灌水或引战</el-radio>
+      <el-radio label="与分区或贴子主题不符">与分区或贴子主题不符</el-radio>
+    </el-radio-group>
+    <span slot="footer" class="dialog-footer">
+                  <el-button @click="adminDialogVisible = false">取消</el-button>
+                  <el-button type="primary" @click="confirmAdminDeleteComment">确认</el-button>
+                </span>
+  </el-dialog>
+
 
 </template>
 

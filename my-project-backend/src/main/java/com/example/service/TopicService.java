@@ -37,7 +37,7 @@ public interface TopicService {
 
     void deleteComment(int id, int uid);
 
-    void deleteCommentByAdmin(int id);
+    void deleteCommentByAdmin(int id,String rule);
 
 
 }

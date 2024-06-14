@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.entity.RestBean;
 import com.example.entity.dto.Interact;
 import com.example.entity.vo.request.AddCommentVO;
+import com.example.entity.vo.request.AdminDeleteVO;
 import com.example.entity.vo.request.TopicCreateVO;
 import com.example.entity.vo.request.TopicUpdateVO;
 import com.example.entity.vo.response.*;
@@ -120,11 +121,19 @@ public class ForumController {
     public RestBean<Void> deleteComment(@RequestParam @Min(0) int id,
                                         @RequestAttribute(Const.ATTR_USER_ID) int uid,
                                         @RequestAttribute(Const.ATTR_USER_ROLE) String role) {
-        if (this.isAdminAccount(role)) {
-            topicService.deleteCommentByAdmin(id);
-        } else {
-            topicService.deleteComment(id, uid);
-        }
+//        if (this.isAdminAccount(role)) {
+//            topicService.deleteCommentByAdmin(id);
+//        } else {
+//            topicService.deleteComment(id, uid);
+//        }
+        topicService.deleteComment(id, uid);
+        return RestBean.success();
+    }
+
+
+    @PostMapping("/admin-delete-comment")
+    public RestBean<Void> adminDeleteComment(@Valid @RequestBody AdminDeleteVO vo) {
+        topicService.deleteCommentByAdmin(vo.getId(), vo.getRule());
         return RestBean.success();
     }
 
