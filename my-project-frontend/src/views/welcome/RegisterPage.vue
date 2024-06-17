@@ -1,13 +1,13 @@
 <template>
-  <div style="text-align: center;margin: 0 20px">
+  <div style="text-align: center;margin: 0 20px" >
     <div style="margin-top: 100px">
-      <div style="font-size: 25px;font-weight: bold">Register</div>
-      <div style="font-size: 14px;color: grey">Welcome to register on our platform.</div>
+      <div style="font-size: 25px;font-weight: bold">注册</div>
+      <div style="font-size: 14px;color: grey">欢迎注册The Code论坛</div>
     </div>
     <div style="margin-top: 50px">
-      <el-form :model="form" :rules="rules" @validate="onValidate" ref="formRef">
+      <el-form :model="form" :rules="rules" @validate="onValidate" ref="formRef" class="form-content">
         <el-form-item prop="username">
-          <el-input v-model="form.username" :maxlength="8" type="text" placeholder="Username">
+          <el-input v-model="form.username" :maxlength="8" type="text" placeholder="用户名" style="height: 50px">
             <template #prefix>
               <el-icon>
                 <User/>
@@ -16,7 +16,7 @@
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="form.password" :maxlength="16" type="password" placeholder="Password">
+          <el-input v-model="form.password" :maxlength="16" type="password" placeholder="密码" style="height: 50px">
             <template #prefix>
               <el-icon>
                 <Lock/>
@@ -25,7 +25,7 @@
           </el-input>
         </el-form-item>
         <el-form-item prop="password_repeat">
-          <el-input v-model="form.password_repeat" :maxlength="16" type="password" placeholder="Repeat Your Password">
+          <el-input v-model="form.password_repeat" :maxlength="16" type="password" placeholder="重复你的密码" style="height: 50px">
             <template #prefix>
               <el-icon>
                 <Lock/>
@@ -34,7 +34,7 @@
           </el-input>
         </el-form-item>
         <el-form-item prop="email">
-          <el-input v-model="form.email" type="email" placeholder="E-mail">
+          <el-input v-model="form.email" type="email" placeholder="E-mail" style="height: 50px">
             <template #prefix>
               <el-icon>
                 <Message/>
@@ -45,7 +45,7 @@
         <el-form-item prop="code">
           <el-row :gutter="10" style="width: 100%">
             <el-col :span="17">
-              <el-input v-model="form.code" :maxlength="6" type="text" placeholder="Verify Code">
+              <el-input v-model="form.code" :maxlength="6" type="text" placeholder="验证码" style="height: 50px">
                 <template #prefix>
                   <el-icon>
                     <EditPen/>
@@ -55,7 +55,7 @@
             </el-col>
             <el-col :span="5">
               <el-button type="success" @click="validateEmail"
-                         :disabled="!isEmailValid || coldTime > 0">
+                         :disabled="!isEmailValid || coldTime > 0" style="height: 50px">
                 {{ coldTime > 0 ? 'Please wait ' + coldTime + ' seconds' : 'to get Verification Code' }}
               </el-button>
             </el-col>
@@ -64,11 +64,11 @@
       </el-form>
     </div>
     <div style="margin-top: 80px">
-      <el-button style="width: 270px" type="warning" @click="register" plain>Register</el-button>
+      <el-button style="width: 270px" @click="register" plain class="register-button">注册</el-button>
     </div>
     <div style="margin-top: 20px">
-      <span style="font-size: 14px;line-height: 15px;color: grey">Already have account? </span>
-      <el-link type="primary" style="translate: 0 -2px" @click="router.push('/')">Log in now</el-link>
+      <span style="font-size: 14px;line-height: 15px;color: grey">已有账户? </span>
+      <el-link type="primary" style="translate: 0 -2px" @click="router.push('/')">登录</el-link>
     </div>
   </div>
 </template>
@@ -260,54 +260,24 @@ const validateEmail = () => {
 </script>
 
 <style scoped>
-.register-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #f5f5f5;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.register-form {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 30px;
-  width: 100%;
-  max-width: 400px;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.title {
-  font-size: 2em;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.description {
-  color: #666;
-}
-
 .form-content {
   margin-bottom: 20px;
 }
 
+
 .register-button {
-  width: 100%;
-  border-radius: 20px;
-  padding: 10px;
-  font-size: 1em;
-  transition: background-color 0.3s;
+
+  border-radius: 10px; /* 调整为更方的圆角 */
+  height: 40px; /* 增加按钮高度 */
+  background: linear-gradient(to right, rgba(74, 144, 226, 0.6), rgba(115, 103, 240, 0.6)); /* 蓝紫渐变背景 */
+  color: white;
+  transition: all 0.3s ease;
+  border-color: transparent; /* 移除按钮边框 */
 }
 
 .register-button:hover {
-  background-color: #e6a23c;
+  transform: translateY(-2px); /* 悬停时上移 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .footer {
@@ -316,6 +286,5 @@ const validateEmail = () => {
   font-size: 0.9em;
 }
 
-/* 其他样式保持不变 */
-/* ... */
+
 </style>

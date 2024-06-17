@@ -99,12 +99,12 @@ navigator.geolocation.getCurrentPosition(position => {
   <div style="display: flex;margin: 20px auto;gap: 20px;max-width: 90%">
     <div style="flex: 1">
       <!--发表帖子-->
-      <light-card>
+      <light-card style="background:linear-gradient(to right, rgba(106, 17, 203, 0.70), rgba(37, 117, 252, 0.70)) ;">
         <div class="create-topic" @click="editor = true">
           <el-icon>
             <EditPen/>
           </el-icon>
-          Submit a new post...
+          发表新帖子...
         </div>
         <div style="margin-top: 10px;display: flex;gap: 13px;font-size: 18px;color: grey">
           <el-icon>
@@ -126,9 +126,9 @@ navigator.geolocation.getCurrentPosition(position => {
       </light-card>
 
       <!--置顶-->
-      <light-card style="margin-top: 10px;display: flex;flex-direction: column;gap: 10px">
+      <light-card style="margin-top: 10px;display: flex;flex-direction: column;gap: 10px;background: linear-gradient(to right, rgba(106, 17, 203, 0.50), rgba(37, 117, 252, 0.50))">
         <div v-for="item in topics.top" class="top-topic" @click="router.push(`/index/topic-detail/${item.id}`)">
-          <el-tag type="info" size="small">Top</el-tag>
+          <el-tag type="info" size="small">置顶</el-tag>
           <div>{{ item.title }}</div>
           <div>{{ new Date(item.time).toLocaleDateString() }}</div>
         </div>
@@ -182,13 +182,13 @@ navigator.geolocation.getCurrentPosition(position => {
                   <el-icon style="vertical-align: middle">
                     <CircleCheck/>
                   </el-icon>
-                  {{ item.like }}like
+                  {{ item.like }}点赞
                 </div>
                 <div>
                   <el-icon style="vertical-align: middle">
                     <Star/>
                   </el-icon>
-                  {{ item.collect }}collect
+                  {{ item.collect }}收藏
                 </div>
               </div>
             </light-card>
@@ -199,11 +199,11 @@ navigator.geolocation.getCurrentPosition(position => {
 
     <!--侧边栏-->
     <div style="width: 25%">
-      <div style="position: sticky;top: 20px">
+      <div style="position: sticky;top: 10px">
         <!--收藏-->
-        <light-card>
-          <div class="collect-list-button" @click="collects = true">
-            <span><el-icon><FolderOpened/></el-icon> My Collections</span>
+        <light-card style="padding: 0px">
+          <div class="collect-list-button" @click="collects = true" style="margin: 0px">
+            <span><el-icon><FolderOpened/></el-icon> 我的收藏</span>
             <el-icon style="transform: translateY(3px)">
               <ArrowRightBold/>
             </el-icon>
@@ -212,50 +212,54 @@ navigator.geolocation.getCurrentPosition(position => {
 
         <!--公告栏-->
         <light-card
-            style="margin-top: 10px ; background: linear-gradient(135deg, #11998e, #38ef7d); color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2)">
+            style="margin-top: 10px ; background: linear-gradient(135deg, #0e8f85, rgba(56,239,125,1.0)); color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2)">
           <div style="font-weight: bold">
             <el-icon>
               <CollectionTag/>
             </el-icon>
-            Announcement
+            公告
           </div>
           <el-divider style="margin: 10px 0"/>
           <div style="font-size: 14px;margin: 10px;color: white">
-            欢迎来到The Code!
+            欢迎来到The Code，一个专注于科学、技术、工程和数学领域知识分享与讨论的论坛。
+            我们致力于打造一个充满活力、互助互学的在线环境，让每一位成员都能在这里找到灵感、解决问题并共同成长。
           </div>
         </light-card>
 
 
+
         <light-card
-            style="margin-top: 10px;background: linear-gradient(135deg, #ffd89b, #19547b); color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+            style="margin-top: 10px;background: linear-gradient(180deg, rgba(82,172,255,0.8) 25%, rgba(255,227,44,0.9) 100%); color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
           <div style="font-weight: bold">
             <el-icon>
               <Calendar/>
             </el-icon>
-            Weather
+            天气
           </div>
           <el-divider style="border-color: rgba(255, 255, 255, 0.5); margin: 10px 0"/>
           <weather :data="weather"/>
         </light-card>
 
+
         <light-card
-            style="margin-top: 10px;background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+            style="margin-top: 10px;background: linear-gradient(135deg, #c9c8cc, #7a7c85); color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
           <div style="display: flex; justify-content: space-between; margin-bottom: 10px;font-size: 15px">
-            <div>Date</div>
+            <div>日期</div>
             <div>{{ today }}</div>
           </div>
           <div style="display: flex; justify-content: space-between;font-size: 15px">
-            <div>IP Address</div>
+            <div>IP地址</div>
             <div>127.0.0.1</div>
           </div>
         </light-card>
+
 
         <!--链接-->
         <div style="font-size: 20px;margin-top: 10px;color: grey">
           <el-icon>
             <Link/>
           </el-icon>
-          Links
+          链接
           <el-divider style="margin: 10px 0"/>
         </div>
 
@@ -442,6 +446,7 @@ navigator.geolocation.getCurrentPosition(position => {
 
 .collect-list-button {
   background: linear-gradient(135deg, #8e2de2, #4a00e0);
+  //background: linear-gradient(90deg, #FEE140 0%, #FA709A 100%);
   color: #fff;
   padding: 10px;
   border-radius: 8px;
@@ -457,7 +462,7 @@ navigator.geolocation.getCurrentPosition(position => {
 }
 
 .announcement-card {
-  background: linear-gradient(135deg, rgba(17, 153, 142, 0.2), rgba(56, 239, 125, 0.2));
+  background: linear-gradient(135deg, rgba(17, 153, 142, 0.1), rgba(56, 239, 125, 0.1));
   color: #fff;
   padding: 20px;
   border-radius: 8px;

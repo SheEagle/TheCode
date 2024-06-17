@@ -27,7 +27,7 @@ function deleteCollect(index, tid) {
 </script>
 
 <template>
-  <el-drawer :model-value="show" @close="emit('close')" @open="init" title="My Collection List">
+  <el-drawer :model-value="show" @close="emit('close')" @open="init" title="我的收藏夹">
     <div class="collect-list">
       <light-card v-for="(item, index) in list" class="topic-card"
                   @click="router.push(`/index/topic-detail/${item.id}`)">

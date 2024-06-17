@@ -25,6 +25,8 @@ public interface TopicService {
 
     void deleteTopic(int tid, int uid);
 
+    void deleteTopicByAdmin(int tid, String rule);
+
     void interact(Interact interact, boolean state);
 
     List<TopicPreviewVO> listTopicCollects(int uid);
@@ -37,7 +39,7 @@ public interface TopicService {
 
     void deleteComment(int id, int uid);
 
-    void deleteCommentByAdmin(int id,String rule);
+    void deleteCommentByAdmin(int id, String rule);
 
 
 }

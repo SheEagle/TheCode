@@ -6,13 +6,13 @@ import {reactive, ref} from "vue";
 import {
   Back,
   Bell,
-  ChatDotSquare, Check, Collection, DataLine,
-  Document, Files,
+  ChatDotSquare, ChatLineRound, Check, Collection, DataLine,
+  Document, Files, Grid,
   Location, Lock, Message, Monitor,
   Operation,
   Position,
   Search,
-  User
+  User, View
 } from "@element-plus/icons-vue";
 import LightCard from "@/components/LightCard.vue";
 import SiteFooter from "@/components/Footer.vue";
@@ -68,19 +68,19 @@ const toggleAside = () => {
       <el-header class="main-content-header">
         <el-image class="logo" src="/src/assets/the.png" style="height: 50px;width: 100px"/>
         <div style="flex: 1;padding: 0 20px;text-align: center">
-          <el-input v-model="searchInput.text" style="width: 100%;max-width: 500px" placeholder="Please Search...">
-            <template #prefix>
-              <el-icon>
-                <Search/>
-              </el-icon>
-            </template>
-            <template #append>
-              <el-select style="width: 120px" v-model="searchInput.type">
-                <el-option value="1" label="Posts"/>
-                <el-option value="2" label="ArtWorks"/>
-              </el-select>
-            </template>
-          </el-input>
+          <!--<el-input v-model="searchInput.text" style="width: 100%;max-width: 500px" placeholder="Please Search...">-->
+          <!--  <template #prefix>-->
+          <!--    <el-icon>-->
+          <!--      <Search/>-->
+          <!--    </el-icon>-->
+          <!--  </template>-->
+          <!--  <template #append>-->
+          <!--    <el-select style="width: 120px" v-model="searchInput.type">-->
+          <!--      <el-option value="1" label="Posts"/>-->
+          <!--      <el-option value="2" label="ArtWorks"/>-->
+          <!--    </el-select>-->
+          <!--  </template>-->
+          <!--</el-input>-->
         </div>
         <!--<div class="search-container">-->
         <!--  <div class="search-box">-->
@@ -114,7 +114,7 @@ const toggleAside = () => {
                   <el-icon>
                     <Bell></Bell>
                   </el-icon>
-                  <div style="font-size: 10px">Notifications</div>
+                  <div style="font-size: 10px">消息</div>
                 </div>
               </el-badge>
             </template>
@@ -137,7 +137,7 @@ const toggleAside = () => {
 
             <div style="margin-top: 10px">
               <el-button size="small" type="info" :icon="Check" @click="deleteAllNotification"
-                         style="width: 100%" plain>Clear all
+                         style="width: 100%" plain>清除消息
               </el-button>
             </div>
           </el-popover>
@@ -146,25 +146,29 @@ const toggleAside = () => {
             <div>{{ store.user.email }}</div>
           </div>
           <el-dropdown>
-            <el-avatar :src="store.avatarUrl"/>
+            <!--<el-avatar :src="store.avatarUrl"/>-->
+            <el-avatar
+                :src="store.avatarUrl"
+                :class="{ 'admin-border': store.isAdmin }">
+            </el-avatar>
             <template #dropdown>
-              <el-dropdown-item>
-                <el-icon>
-                  <Operation/>
-                </el-icon>
-                Personal Settings
-              </el-dropdown-item>
-              <el-dropdown-item>
-                <el-icon>
-                  <Message/>
-                </el-icon>
-                Notifications
-              </el-dropdown-item>
+              <!--<el-dropdown-item>-->
+              <!--  <el-icon>-->
+              <!--    <Operation/>-->
+              <!--  </el-icon>-->
+              <!--  Personal Settings-->
+              <!--</el-dropdown-item>-->
+              <!--<el-dropdown-item>-->
+              <!--  <el-icon>-->
+              <!--    <Message/>-->
+              <!--  </el-icon>-->
+              <!--  Notifications-->
+              <!--</el-dropdown-item>-->
               <el-dropdown-item @click="userLogout" divided>
                 <el-icon>
                   <Back/>
                 </el-icon>
-                Logout
+                退出登录
               </el-dropdown-item>
             </template>
           </el-dropdown>
@@ -187,22 +191,23 @@ const toggleAside = () => {
                   <el-icon>
                     <Location/>
                   </el-icon>
-                  <span><b>Ultraviolet</b></span>
+                  <span><b>The Code</b></span>
                 </template>
                 <el-menu-item index="/index">
                   <template #title>
                     <el-icon>
-                      <ChatDotSquare/>
+                      <View/>
                     </el-icon>
-                    Posts
+                    帖子广场
                   </template>
                 </el-menu-item>
                 <el-menu-item index="/index/ai-chat">
                   <template #title>
                     <el-icon>
-                      <Bell/>
+                      <ChatLineRound/>
                     </el-icon>
-                    Chat
+                    AI问答
+                    <el-tag style="margin-left: 10px" size="small">施工中……</el-tag>
                   </template>
                 </el-menu-item>
               </el-sub-menu>
@@ -211,62 +216,31 @@ const toggleAside = () => {
               <!--    <el-icon>-->
               <!--      <Position/>-->
               <!--    </el-icon>-->
-              <!--    <span><b>Imagination Markets</b></span>-->
+              <!--    <span><b>我的空间</b></span>-->
               <!--  </template>-->
-              <!--  <el-menu-item>-->
-              <!--    <template #title>-->
-              <!--      <el-icon>-->
-              <!--        <Document/>-->
-              <!--      </el-icon>-->
-              <!--      Music-->
-              <!--    </template>-->
-              <!--  </el-menu-item>-->
               <!--  <el-menu-item>-->
               <!--    <template #title>-->
               <!--      <el-icon>-->
               <!--        <Files/>-->
               <!--      </el-icon>-->
-              <!--      Painting-->
+              <!--      动态-->
               <!--    </template>-->
               <!--  </el-menu-item>-->
-              <!--  <el-menu-item>-->
-              <!--    <template #title>-->
-              <!--      <el-icon>-->
-              <!--        <Monitor/>-->
-              <!--      </el-icon>-->
-              <!--      Photography-->
-              <!--    </template>-->
-              <!--  </el-menu-item>-->
-              <!--  <el-menu-item>-->
-              <!--    <template #title>-->
-              <!--      <el-icon>-->
-              <!--        <Collection/>-->
-              <!--      </el-icon>-->
-              <!--      Books-->
-              <!--    </template>-->
-              <!--  </el-menu-item>-->
-              <!--  <el-menu-item>-->
-              <!--    <template #title>-->
-              <!--      <el-icon>-->
-              <!--        <DataLine/>-->
-              <!--      </el-icon>-->
-              <!--      Scripts-->
-              <!--    </template>-->
-              <!--  </el-menu-item>-->
+
               <!--</el-sub-menu>-->
               <el-sub-menu index="3">
                 <template #title>
                   <el-icon>
                     <Operation/>
                   </el-icon>
-                  <span><b>Settings</b></span>
+                  <span><b>设置</b></span>
                 </template>
                 <el-menu-item index="/index/user-setting">
                   <template #title>
                     <el-icon>
                       <User/>
                     </el-icon>
-                    Account
+                    账号设置
                   </template>
                 </el-menu-item>
                 <el-menu-item index="/index/privacy-setting">
@@ -274,7 +248,7 @@ const toggleAside = () => {
                     <el-icon>
                       <Lock/>
                     </el-icon>
-                    Security
+                    安全设置
                   </template>
                 </el-menu-item>
               </el-sub-menu>
@@ -295,7 +269,6 @@ const toggleAside = () => {
     </el-container>
   </div>
 </template>
-
 
 
 <style lang="less" scoped>
@@ -475,5 +448,62 @@ button {
   cursor: pointer;
   width: 95%;
   height: 10px;
+}
+
+//.admin-border {
+//  border: 6px solid mediumpurple; /* 金边 */
+//  display: inline-block; /* 确保边框包裹在元素上 */
+//  border-radius: 50%; /* 圆角 */
+//  padding: 2px; /* 边框和头像之间的间隙 */
+//  /* 可以添加box-sizing: border-box;来确保padding不会增加元素的总宽度 */
+//}
+.admin-border {
+  position: relative; /* 确保伪元素绝对定位相对于这个元素 */
+  border: 6px solid mediumpurple; /* 边框颜色 */
+  border-radius: 50%; /* 圆角 */
+  display: inline-block;
+  overflow: hidden; /* 确保内容不会溢出边框 */
+  box-shadow: 0 0 10px rgba(128, 0, 128, 0.5), /* 外部阴影 */
+  0 0 20px rgba(128, 0, 128, 0.4), /* 外部阴影 */
+  inset 0 0 5px rgba(255, 255, 255, 0.6); /* 内部高光 */
+  transition: box-shadow 0.3s ease-in-out; /* 平滑过渡阴影效果 */
+}
+
+/* 添加一个伪元素来创建边框的发光效果 */
+.admin-border::after {
+  content: '';
+  position: absolute;
+  top: -50px;
+  left: -50px;
+  right: -50px;
+  bottom: -50px;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+  border-radius: 50%;
+  z-index: -1;
+  animation: glow 5s infinite alternate;
+}
+
+/* 动画效果 */
+@keyframes glow {
+  from {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* 鼠标悬停效果 */
+.admin-border:hover {
+  box-shadow: 0 0 20px mediumpurple, /* 更大的阴影 */
+  0 0 30px mediumpurple,
+  inset 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+/* 鼠标悬停时动画效果 */
+.admin-border:hover::after {
+  animation: none; /* 停止动画 */
 }
 </style>

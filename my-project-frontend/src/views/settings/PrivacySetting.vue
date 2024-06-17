@@ -110,47 +110,47 @@ function savePrivacy(type, status) {
     <div style="margin-top: 20px">
 
       <!-- Privacy Settings -->
-      <card :icon="Setting" title="Privacy Settings"
-            desc="Set what content can be seen by others here. Please pay attention to your privacy."
+      <card :icon="Setting" title="隐私设置"
+            desc="在这里设置哪些内容可以被其他人看到，请各位小伙伴注重自己的隐私"
             v-loading="saving">
         <div class="checkbox-list">
           <el-checkbox @change="savePrivacy('phone', privacy.phone)"
-                       v-model="privacy.phone">Display my phone number publicly
+                       v-model="privacy.phone">公开展示我的手机号
           </el-checkbox>
           <el-checkbox @change="savePrivacy('email', privacy.email)"
-                       v-model="privacy.email">Display my email address publicly
+                       v-model="privacy.email">公开展示我的邮箱
           </el-checkbox>
           <el-checkbox @change="savePrivacy('wx', privacy.wx)"
-                       v-model="privacy.wx">Display my WeChat ID publicly
+                       v-model="privacy.wx">公开展示我的微信
           </el-checkbox>
           <el-checkbox @change="savePrivacy('qq', privacy.qq)"
-                       v-model="privacy.qq">Display my QQ number publicly
+                       v-model="privacy.qq">公开展示我的QQ
           </el-checkbox>
           <el-checkbox @change="savePrivacy('gender', privacy.gender)"
-                       v-model="privacy.gender">Display my gender publicly
+                       v-model="privacy.gender">公开展示我的性别
           </el-checkbox>
         </div>
       </card>
 
       <!-- Reset Password -->
       <card style="margin: 20px 0" :icon="Setting"
-            title="Change Password" desc="Change your password here. Please remember your password carefully">
+            title="修改密码" desc="修改密码请在这里进行操作，请务必牢记您的密码">
         <el-form :rules="rules" :model="form" ref="formRef" @validate="onValidate" label-width="100"
                  style="margin: 20px">
-          <el-form-item label="Current Password" prop="password">
+          <el-form-item label="当前密码" prop="password" style="width: 90%">
             <el-input type="password" :prefix-icon="Lock" v-model="form.password"
-                      placeholder="Current Password" maxlength="16"/>
+                      placeholder="当前密码" maxlength="16"/>
           </el-form-item>
-          <el-form-item label="New Password" prop="new_password">
+          <el-form-item label="新密码" prop="new_password" style="width: 90%">
             <el-input type="password" :prefix-icon="Lock" v-model="form.new_password"
-                      placeholder="New Password" maxlength="16"/>
+                      placeholder="新密码" maxlength="16"/>
           </el-form-item>
-          <el-form-item label="Repeat New Password" prop="new_password_repeat">
+          <el-form-item label="重复新密码" prop="new_password_repeat" style="width: 90%">
             <el-input type="password" :prefix-icon="Lock" v-model="form.new_password_repeat"
-                      placeholder="Repeat New Password" maxlength="16"/>
+                      placeholder="重复新密码" maxlength="16"/>
           </el-form-item>
           <div style="text-align: center">
-            <el-button @click="resetPassword" :icon="Switch" type="success">Reset Password Now</el-button>
+            <el-button @click="resetPassword" :icon="Switch" type="success">立即重置密码</el-button>
           </div>
         </el-form>
       </card>

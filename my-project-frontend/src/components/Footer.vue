@@ -8,12 +8,12 @@
         <h3>Break The Code</h3>
         <ul>
           <li><a href="https://womeninstem.org/" target="_blank">WOMAN IN STEM - WISTEM</a></li>
-          <li><a href="/about">About us</a></li>
-          <li><a href="/contact">Contact us</a></li>
+          <li><a href="/about">关于我们</a></li>
+          <li><a href="/contact">联系我们</a></li>
         </ul>
       </div>
       <div class="footer-copyright">
-        <p>Copyright © 2024 SheEagle. All rights reserved.</p>
+        <p>Copyright © 2024 The Code. All rights reserved.</p>
       </div>
       <!--<div class="footer-additional-info">-->
       <!--  <p>Building up a world of bridges</p>-->

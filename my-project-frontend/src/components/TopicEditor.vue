@@ -20,7 +20,7 @@ const props = defineProps({
   defaultTitle: {default: '', type: String}, // 默认标题
   defaultText: {default: '', type: String}, // 默认文本内容
   defaultType: {default: null, type: Number}, // 默认帖子类型
-  submitButton: {default: 'Post Topic Now', type: String}, // 提交按钮的文本
+  submitButton: {default: '立即发帖', type: String}, // 提交按钮的文本
   submit: { // 提交按钮点击事件，默认为发表主题的函数
     default: (editor, success) => {
       post('/api/forum/create-topic', {
@@ -28,7 +28,7 @@ const props = defineProps({
         title: editor.title,
         content: editor.text
       }, () => {
-        ElMessage.success("Post published successfully!");
+        ElMessage.success("帖子发表成功！");
         success();
       });
     },
@@ -176,9 +176,8 @@ const editorOption = {
       <!-- Header Title -->
       <template #header>
         <div>
-          <div style="font-weight: bold">Post a New Topic</div>
-          <div style="font-size: 13px">Before posting content, please comply with relevant laws and regulations, and
-            avoid using abusive language or other uncivilized behavior.
+          <div style="font-weight: bold">发表新的帖子</div>
+          <div style="font-size: 13px">发表内容之前，请遵守论坛守则和相关法律法规，不要出现不文明行为。
           </div>
         </div>
       </template>
@@ -186,7 +185,7 @@ const editorOption = {
       <!-- Select Topic Type and Title Input -->
       <div style="display: flex; gap: 10px">
         <div style="width: 150px">
-          <el-select placeholder="Select topic type..." value-key="id" v-model="editor.type"
+          <el-select placeholder="请选择帖子分区..." value-key="id" v-model="editor.type"
                      :disabled="!store.forum.types.length">
             <el-option v-for="item in store.forum.types.filter(type => type.id > 0)" :value="item" :label="item.name">
               <div>
@@ -198,7 +197,7 @@ const editorOption = {
         </div>
 
         <div style="flex: 1">
-          <el-input v-model="editor.title" placeholder="Enter topic title..." :prefix-icon="Document"
+          <el-input v-model="editor.title" placeholder="请输入帖子标题..." :prefix-icon="Document"
                     style="height: 100%" maxlength="30"/>
         </div>
       </div>
@@ -207,23 +206,23 @@ const editorOption = {
       <div style="margin-top: 5px; font-size: 13px; color: grey">
         <color-dot :color="editor.type ? editor.type.color : '#dedede'"/>
         <span style="margin-left: 5px">{{
-            editor.type ? editor.type.description : 'Please select a topic type above'
+            editor.type ? editor.type.description : '请在上方选择一个帖子分区'
           }}</span>
       </div>
 
       <!-- Rich Text Editor -->
       <div style="margin-top: 10px; height: 440px; overflow: hidden; border-radius: 5px"
            v-loading="editor.uploading"
-           element-loading-text="Uploading image, please wait...">
+           element-loading-text="正在上传图片，请稍后...">
         <quill-editor v-model:content="editor.text" style="height: calc(100% - 45px)"
                       content-type="delta" ref="refEditor"
-                      placeholder="What would you like to share today?" :options="editorOption"/>
+                      placeholder="今天想分享点什么呢?" :options="editorOption"/>
       </div>
 
       <!-- Word Count and Submit Button -->
       <div style="display: flex; justify-content: space-between; margin-top: 5px">
         <div style="color: grey; font-size: 13px">
-          Word count: {{ contentLength }} (maximum 20,000 characters)
+          当前字数: {{ contentLength }} (最大支持20000字)
         </div>
         <div>
           <el-button type="success" :icon="Check" @click="submitTopic" plain>{{ submitButton }}</el-button>

@@ -176,73 +176,73 @@ function uploadSuccess(response) {
 </script>
 
 <template>
-  <div style="display: flex;max-width: 1000px;margin: auto">
-    <div class="settings-left">
+  <div style="display: flex;margin: auto">
+    <div class="settings-left" style="width: 500px;margin-left: 100px">
 
       <!--账号信息设置-->
-      <card :icon="User" title="Account Settings"
-            desc="Edit your personal information here. You can choose whether to display this information in privacy settings."
+      <card :icon="User" title="账号信息设置"
+            desc="在这里编辑您的个人信息，您可以在隐私设置中选择是否展示这些信息"
             v-loading="loading.form">
         <el-form :model="baseForm" :rules="rules" ref="baseFormRef" label-position="top"
                  style="margin: 0 10px 10px 10px">
-          <el-form-item label="Username" prop="username">
+          <el-form-item label="用户名" prop="username">
             <el-input v-model="baseForm.username" maxlength="10"/>
           </el-form-item>
-          <el-form-item label="Gender">
+          <el-form-item label="性别">
             <el-radio-group v-model="baseForm.gender">
-              <el-radio :label="0">Male</el-radio>
-              <el-radio :label="1">Female</el-radio>
+              <el-radio :label="0">男</el-radio>
+              <el-radio :label="1">女</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="Phone" prop="phone">
+          <el-form-item label="手机号" prop="phone">
             <el-input v-model="baseForm.phone" maxlength="11"/>
           </el-form-item>
           <el-form-item label="QQ" prop="qq">
             <el-input v-model="baseForm.qq" maxlength="13"/>
           </el-form-item>
-          <el-form-item label="Wechat" prop="wx">
+          <el-form-item label="微信" prop="wx">
             <el-input v-model="baseForm.wx" maxlength="20"/>
           </el-form-item>
-          <el-form-item label="Introduction" prop="introduction">
+          <el-form-item label="个人简介" prop="introduction">
             <el-input v-model="baseForm.introduction" type="textarea" :rows="6" maxlength="200"/>
           </el-form-item>
           <div>
             <el-button :icon="Select" @click="saveDetails" :loading="loading.base"
-                       type="success">Save User Profile
+                       type="success">保存用户信息
             </el-button>
           </div>
         </el-form>
       </card>
 
       <!--修改邮件地址-->
-      <card style="margin-top: 10px" :icon="Message" title="Email Settings"
-            desc="You can modify the default email here.">
+      <card style="margin-top: 10px" :icon="Message" title="电子邮件设置"
+            desc="您可以在这里修改默认绑定的电子邮件地址">
         <el-form :rules="rules" @validate="onValidate" :model="emailForm" ref="emailFormRef"
                  label-position="top" style="margin: 0 10px 10px 10px">
-          <el-form-item label="Email" prop="email">
+          <el-form-item label="电子邮件" prop="email">
             <el-input v-model="emailForm.email"/>
           </el-form-item>
           <el-form-item prop="code">
             <el-row style="width: 100%" :gutter="10">
               <el-col :span="18">
-                <el-input placeholder="Please get verification code" v-model="emailForm.code"/>
+                <el-input placeholder="请获取验证码" v-model="emailForm.code"/>
               </el-col>
               <el-col :span="6">
                 <el-button type="success" style="width: 100%" :disabled="!isEmailValid || coldTime > 0"
                            @click="sendEmailCode" plain>
-                  {{ coldTime > 0 ? `Please wait ${coldTime} seconds` : 'get code' }}
+                  {{ coldTime > 0 ? `请稍后 ${coldTime} 秒` : '获取验证码' }}
                 </el-button>
               </el-col>
             </el-row>
           </el-form-item>
           <div>
-            <el-button :icon="Refresh" type="success" @click="modifyEmail">Update Email</el-button>
+            <el-button :icon="Refresh" type="success" @click="modifyEmail">更新电子邮件</el-button>
           </div>
         </el-form>
       </card>
     </div>
 
-    <div class="settings-right">
+    <div class="settings-right" style="width: 300px">
       <div style="position: sticky;top: 20px">
         <!--修改头像-->
         <card>
@@ -255,7 +255,7 @@ function uploadSuccess(response) {
                   :before-upload="beforeAvatarUpload"
                   :on-success="uploadSuccess"
                   :headers="accessHeader()">
-                <el-button size="small" round>Update Avatar</el-button>
+                <el-button size="small" round>修改头像</el-button>
               </el-upload>
             </div>
             <div style="font-weight: bold">Hi, {{ store.user.username }}</div>
@@ -268,8 +268,8 @@ function uploadSuccess(response) {
 
         <!--账号注册时间-->
         <card style="margin-top: 10px;font-size: 14px">
-          <div>Registration Time: {{ registerTime }}</div>
-          <div style="color: grey">Welcome to Ultraviolet!</div>
+          <div>注册时间: {{ registerTime }}</div>
+          <div style="color: grey">欢迎来到The Code大家庭!</div>
         </card>
       </div>
     </div>
@@ -294,7 +294,7 @@ function uploadSuccess(response) {
 }
 
 .settings-left {
-  max-width: 600px; /* 限制最大宽度 */
+  max-width: 900px; /* 限制最大宽度 */
 }
 
 .settings-right {

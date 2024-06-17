@@ -220,6 +220,32 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     }
 
     @Override
+    public void deleteTopicByAdmin(int tid, String rule) {
+        // 根据帖子ID查找帖子
+        LambdaQueryWrapper<Topic> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Topic::getId, tid);
+        Topic topic = this.getOne(queryWrapper);
+
+        if (topic != null) {
+            String title = topic.getTitle();
+            int uid = topic.getUid();
+
+            // 删除帖子
+            this.remove(queryWrapper);
+
+            String message = "管理员删除了您的帖子：'" + title + "'";
+            notificationService.addNotification(
+                    uid,
+                    "您的帖子疑似" + rule + ",已被管理员删除",
+                    message,
+                    "danger",
+                    "/index"
+            );
+
+        }
+    }
+
+    @Override
     public void interact(Interact interact, boolean state) {
         String type = interact.getType();
         synchronized (type.intern()) {
@@ -458,7 +484,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
             String message = "管理员删除了您的评论：'" + content + "'";
             notificationService.addNotification(
                     uid,
-                    "您的评论疑似含有以下内容" + rule + ",已被管理员移除",
+                    "您的评论疑似" + rule + ",已被管理员移除",
                     message,
                     "danger",
                     "/index"

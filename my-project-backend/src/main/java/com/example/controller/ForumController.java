@@ -2,10 +2,7 @@ package com.example.controller;
 
 import com.example.entity.RestBean;
 import com.example.entity.dto.Interact;
-import com.example.entity.vo.request.AddCommentVO;
-import com.example.entity.vo.request.AdminDeleteVO;
-import com.example.entity.vo.request.TopicCreateVO;
-import com.example.entity.vo.request.TopicUpdateVO;
+import com.example.entity.vo.request.*;
 import com.example.entity.vo.response.*;
 import com.example.service.TopicService;
 import com.example.service.WeatherService;
@@ -97,10 +94,16 @@ public class ForumController {
     }
 
 
-    @PostMapping("/delete-topic")
+    @GetMapping("/delete-topic")
     public RestBean<Void> deleteTopic(@RequestParam @Min(0) int id,
                                       @RequestAttribute(Const.ATTR_USER_ID) int uid) {
         topicService.deleteTopic(id, uid);
+        return RestBean.success();
+    }
+
+    @PostMapping("/admin-delete-topic")
+    public RestBean<Void> adminDeleteTopic(@Valid @RequestBody AdminTopicDeleteVO vo) {
+        topicService.deleteTopicByAdmin(vo.getId(), vo.getRule());
         return RestBean.success();
     }
 
@@ -132,7 +135,7 @@ public class ForumController {
 
 
     @PostMapping("/admin-delete-comment")
-    public RestBean<Void> adminDeleteComment(@Valid @RequestBody AdminDeleteVO vo) {
+    public RestBean<Void> adminDeleteComment(@Valid @RequestBody AdminCommentDeleteVO vo) {
         topicService.deleteCommentByAdmin(vo.getId(), vo.getRule());
         return RestBean.success();
     }

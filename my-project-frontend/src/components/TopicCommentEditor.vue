@@ -19,7 +19,7 @@ const init = () => content.value = new Delta()
 
 function submitComment() {
   if (deltaToText(content.value).length > 2000) {
-    ElMessage.warning('The comment exceeds the maximum limit. Please shorten your comment!')
+    ElMessage.warning('评论字数已经超出最大限制，请缩减评论内容！')
     return
   }
   post('/api/forum/add-comment', {
@@ -27,7 +27,7 @@ function submitComment() {
     quote: props.quote ? props.quote.id : -1,
     content: JSON.stringify(content.value)
   }, () => {
-    ElMessage.success('Comment posted successfully')
+    ElMessage.success('发表评论成功！')
     emit('comment')
   })
 }
@@ -77,20 +77,20 @@ function deltaToText(delta) {
 <template>
   <div>
     <el-drawer :model-value="show"
-               :title="quote ? `Reply to comment: ${deltaToSimpleText(quote.content)}` : 'Reply to Post'"
+               :title="quote ? `发表对评论: ${deltaToSimpleText(quote.content)}的回复` : '发表帖子回复'"
                @open="init" @close="emit('close')"
                direction="btt" :size="270"
                :close-on-click-modal="false">
       <div>
         <div>
           <quill-editor style="height: 120px" v-model:content="content"
-                        placeholder="Please leave a friendly comment"/>
+                        placeholder="请发表友善的评论"/>
         </div>
         <div style="margin-top: 10px;display: flex">
           <div style="flex: 1;font-size: 13px;color: grey">
-            Word count: {{ deltaToText(content).length }} (Maximum 2000 characters)
+            字数统计: {{ deltaToText(content).length }} (最大支持2000字)
           </div>
-          <el-button type="success" @click="submitComment" plain>Submit Comment</el-button>
+          <el-button type="success" @click="submitComment" plain>发表评论</el-button>
         </div>
       </div>
     </el-drawer>

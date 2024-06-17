@@ -3,7 +3,7 @@ package com.example.entity.vo.request;
 import lombok.Data;
 
 @Data
-public class AdminDeleteVO {
+public class AdminTopicDeleteVO {
     Integer id;
     String rule;
 }

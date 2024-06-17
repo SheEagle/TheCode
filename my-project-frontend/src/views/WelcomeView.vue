@@ -2,20 +2,14 @@
   <div style="width: 100vw;height: 100vh;overflow: hidden;display: flex">
     <div style="flex: 1">
       <el-image style="width: 100%;height: 100%" fit="cover"
-                src="https://dogefs.s3.ladydaily.com/~/source/unsplash/photo-1609270460854-e8ea8c0b591f?ixid=M3w0MjI2NjN8MHwxfHRvcGljfHxhZXU2ckwtajZld3x8fHx8Mnx8MTcxNjMyMTA0Nnw&ixlib=rb-4.0.3&w=2560&h=1440&fmt=webp"/>
+                src="https://dogefs.s3.ladydaily.com/~/source/unsplash/photo-1692607431186-e8d7837ad65b?ixid=M3w0MjI2NjN8MHwxfHRvcGljfHxhZXU2ckwtajZld3x8fHx8Mnx8MTcxODE1NTk2OXw&ixlib=rb-4.0.3&w=2560&h=1440&fmt=webp"/>
     </div>
     <div class="welcome-title">
-      <div style="font-family: Arial, sans-serif; font-size: 40px; font-weight: bold">Welcome to Ultraviolet</div>
+      <div style="font-family: Arial, sans-serif; font-size: 40px; font-weight: bold">欢迎来到The Code</div>
       <div style="font-family: Arial, sans-serif; margin-top: 10px; font-size: 20px">
-        A place where you can connect with
-        other women who share
-        interests in STEM, arts, and more.
+        一个你可以结识STEM爱好者、从业者的论坛。
       </div>
-      <div style="font-family: Arial, sans-serif; margin-top: 10px">Explore Java
-        programming, website
-        development, and
-        have meaningful
-        discussions with industry experts.
+      <div style="font-family: Arial, sans-serif; margin-top: 10px">探索科技前沿、交流学习心得，并与行业专家进行有意义的讨论。
       </div>
     </div>
     <div class="right-card">
@@ -34,7 +28,7 @@
 
 <style scoped>
 .right-card {
-  width: 400px;
+  width: 430px;
   z-index: 1;
   background-color: var(--el-bg-color);
 }

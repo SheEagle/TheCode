@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.Length;
 @Data
 public class TopicCreateVO {
     @Min(1)
-    @Max(5)
+    @Max(6)
     Integer type;
     @Length(min = 1, max = 30)
     String title;

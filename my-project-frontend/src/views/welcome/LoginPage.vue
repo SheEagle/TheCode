@@ -2,22 +2,22 @@
   <div class="login-form-container">
     <div style="text-align: center;margin: 0 20px">
       <div style="margin-top: 150px">
-        <div style="font-size: 25px;font-weight: bold">Log in</div>
-        <div style="font-size: 14px;color: grey">Please enter your username and password to log in the system.</div>
+        <div style="font-size: 25px;font-weight: bold">登录</div>
+        <div style="font-size: 14px;color: grey">请输入用户名和密码以登录The Code论坛</div>
       </div>
-      <div style="margin-top: 50px">
+      <div style="margin-top: 40px">
         <el-form :model="form" :rules="rules" ref="formRef">
           <el-form-item prop="username">
-            <el-input v-model="form.username" maxlength="30" type="text" placeholder="用户名/邮箱">
-              <template #prefix>
+            <el-input v-model="form.username" maxlength="30" type="text" placeholder="用户名/邮箱" style="height: 50px;margin:10px">
+              <template #prefix style="height: 50px;">
                 <el-icon>
                   <User/>
                 </el-icon>
               </template>
             </el-input>
           </el-form-item>
-          <el-form-item prop="password">
-            <el-input v-model="form.password" type="password" maxlength="20" style="margin-top: 10px"
+          <el-form-item prop="password" >
+            <el-input v-model="form.password" type="password" maxlength="20" style="height: 50px;margin:10px;margin-top: 2px"
                       placeholder="密码">
               <template #prefix>
                 <el-icon>
@@ -26,26 +26,26 @@
               </template>
             </el-input>
           </el-form-item>
-          <el-row style="margin-top: 5px">
+          <el-row style="margin-top: 5px;margin-left:10px">
             <el-col :span="12" style="text-align: left">
               <el-form-item prop="remember">
-                <el-checkbox v-model="form.remember" label="Remember me"/>
+                <el-checkbox v-model="form.remember" label="记住我"/>
               </el-form-item>
             </el-col>
             <el-col :span="12" style="text-align: right">
-              <el-link @click="router.push('/forget')">Forget the password?</el-link>
+              <el-link @click="router.push('/forget')">忘记密码?</el-link>
             </el-col>
           </el-row>
         </el-form>
       </div>
       <div style="margin-top: 40px">
-        <el-button @click="userLogin()" style="width: 270px" type="success" plain>Log in now</el-button>
+        <el-button @click="userLogin()" style="width: 270px" type="success" plain>登录</el-button>
       </div>
       <el-divider>
-        <span style="color: grey;font-size: 13px">no account?</span>
+        <span style="color: grey;font-size: 13px">没有账号?</span>
       </el-divider>
       <div>
-        <el-button style="width: 270px" @click="router.push('/register')" type="warning" plain>Register</el-button>
+        <el-button style="width: 270px" @click="router.push('/register')" type="warning" plain>注册</el-button>
       </div>
     </div>
   </div>
@@ -84,24 +84,26 @@ function userLogin() {
 
 <style scoped>
 
-/*!* 表单卡片 *!*/
-/*.el-form {*/
-/*  padding: 30px;*/
-/*  background: white;*/
-/*  border-radius: 10px;*/
-/*  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
-/*}*/
-
 /* 输入框样式 */
 .el-input__inner {
-  border-radius: 20px; /* 圆角边框 */
+  border-radius: 10px; /* 调整圆角边框为更方的形状 */
+  height: 50px !important;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* 按钮样式 */
+/*!* 按钮样式 *!*/
+/*.el-button {*/
+/*  border-radius: 10px; !* 圆角边框 *!*/
+/*  transition: all 0.3s ease;*/
+/*}*/
+/* 按钮样式调整 */
 .el-button {
-  border-radius: 20px; /* 圆角边框 */
+  border-radius: 10px; /* 调整为更方的圆角 */
+  height: 40px; /* 增加按钮高度 */
+  background: linear-gradient(to right, rgba(74, 144, 226, 0.6), rgba(115, 103, 240, 0.6)); /* 蓝紫渐变背景 */
+  color: white;
   transition: all 0.3s ease;
+  border-color: transparent; /* 移除按钮边框 */
 }
 
 .el-button:hover {
@@ -143,6 +145,7 @@ function userLogin() {
   width: 100%; /* 按钮宽度占满容器 */
   padding: 10px; /* 按钮内边距 */
   font-size: 16px; /* 按钮文字大小 */
+  border-radius: 2px;
 }
 
 </style>
