@@ -1,43 +1,118 @@
-
 <template>
-  <div class="chat-container" v-loading="loading" element-loading-text="AI is thinking...">
-    <div class="chat-box">
-      <el-scrollbar class="scrollbar">
-        <div v-for="(message, index) in messages" :key="index" class="message">
-          <div :class="['message-bubble', message.user ? 'user-message' : 'ai-message']">
-            <div class="message-content" v-if="message.user">{{ message.content }}</div>
-            <div v-else>
-              <div v-html="message.content"></div>
-              <el-button class="copy-button" style="width:20px" type="text" @click="copyAnswer(message.content)">
+  <div style="height: 100%">
+    <div class="chat-container" v-loading="loading" element-loading-text="AI is thinking...">
+      <div class="session-list">
+        <el-scrollbar class="scrollbar" style="height: 100%">
+          <div v-for="(session, index) in sessions" :key="index" class="session-item"
+               @click="selectSession(session.id)">
+            <!--<div class="session-title">{{ session.sessionName || '未命名对话' }}</div>-->
+            <div class="session-title">{{ session.sessionName || '未命名对话' }}
+              <el-button type="text" style="background: linear-gradient(135deg, #6a11cb, #2575fc)" class="rename-button"
+                         @click.stop="renameSession(session)">
                 <el-icon>
-                  <DocumentCopy/>
+                  <Edit/>
                 </el-icon>
               </el-button>
+            </div>
+            <div class="session-date">{{ formatDate(session.createdAt) }}</div>
+          </div>
+        </el-scrollbar>
+      </div>
+
+      <div class="chat-right">
+        <div class="chat-box">
+          <el-scrollbar class="scrollbar" style="height: 100%">
+            <div v-for="(message, index) in messages" :key="index" class="message">
+              <div class="message-bubble question-bubble" v-if="message.question">
+                <div class="message-content">{{ message.question }}</div>
+                <el-button class="copy-button" style="width:20px" type="text" @click="copyAnswer(message.question)">
+                  <el-icon>
+                    <DocumentCopy/>
+                  </el-icon>
+                </el-button>
+                <div class="timestamp">{{ formatDate(message.createdAt) }}</div>
+              </div>
+
+              <div style="background: linear-gradient(135deg, #6a11cb, #2575fc);margin-top: 10px" class="message-bubble"
+                   v-if="message.answer">
+                <div class="message-content" v-html="marked(message.answer)"></div>
+                <el-button class="copy-button" style="width:20px" type="text" @click="copyAnswer(message.answer)">
+                  <el-icon>
+                    <DocumentCopy/>
+                  </el-icon>
+                </el-button>
+                <div class="timestamp">{{ formatDate(message.createdAt) }}</div>
+              </div>
 
             </div>
-            <div class="timestamp">{{ formatDate(message.time) }}</div>
-
-          </div>
+          </el-scrollbar>
         </div>
-      </el-scrollbar>
-    </div>
-    <div class="input-box">
-      <el-input v-model="question" placeholder="Ask something..." @keyup.enter="askQuestion"/>
-      <el-button @click="askQuestion" type="primary" icon="el-icon-s-promotion">Send</el-button>
+
+        <div class="input-box">
+          <el-input v-model="question" placeholder="想要问点什么呢?" @keyup.enter="askQuestion"/>
+          <el-button @click="askQuestion" type="primary" icon="el-icon-s-promotion">发送</el-button>
+        </div>
+      </div>
+
     </div>
   </div>
+
 </template>
 
 <script setup>
-import {ref} from 'vue';
-import {ElMessage} from 'element-plus';
-import {post} from '@/net';
+import {ref, onMounted} from 'vue';
+import {ElMessage, ElMessageBox} from 'element-plus';
+import {get, post} from '@/net';
 import {marked} from 'marked';
-import {DocumentCopy} from "@element-plus/icons-vue";
+import {DocumentCopy, Edit} from "@element-plus/icons-vue";
+import {useStore} from "@/store";
 
 const question = ref('');
 const messages = ref([]);
+const sessions = ref([]);
+const currentSessionId = ref(null);
 const loading = ref(false);
+const store = useStore()
+
+const fetchSessions = () => {
+  const userId = store.user.id;
+  get(`/api/chat/sessions?userId=${userId}`, (data) => {
+    sessions.value = data;
+  }, (message, code, url) => {
+    console.warn(`Request failed: ${url}, status: ${code}, message: ${message}`);
+    ElMessage.error('Failed to load sessions.');
+  });
+};
+
+const selectSession = (sessionId) => {
+  currentSessionId.value = sessionId;
+  get(`/api/chat/sessions/${sessionId}`, (data) => {
+    messages.value = data.map(chat => ({
+      question: chat.question,
+      answer: chat.answer,
+      createdAt: new Date(chat.createdAt)
+    }));
+  }, (message, code, url) => {
+    console.warn(`Request failed: ${url}, status: ${code}, message: ${message}`);
+    ElMessage.error('Failed to load session messages.');
+  });
+};
+
+const createSession = (callback) => {
+  const newSession = {
+    sessionName: '未命名会话',
+    createdAt: new Date(),
+  };
+  post('/api/chat/create-session', newSession, (data) => {
+    sessions.value.push(data);
+    currentSessionId.value = data.id;
+    if (callback) callback();
+  }, (message, code, url) => {
+    console.warn(`Request failed: ${url}, status: ${code}, message: ${message}`);
+    ElMessage.error('Failed to create a new session.');
+  });
+};
+
 
 const askQuestion = () => {
   if (!question.value.trim()) {
@@ -45,15 +120,25 @@ const askQuestion = () => {
     return;
   }
 
-  const userMessage = {user: true, content: question.value, time: new Date()};
+  if (!currentSessionId.value) {
+    createSession(() => {
+      sendQuestion();
+    });
+  } else {
+    sendQuestion();
+  }
+};
+
+const sendQuestion = () => {
+  const userMessage = {question: question.value, createdAt: new Date(), answer: null};
   messages.value.push(userMessage);
   loading.value = true;
 
-  post('/api/chat/ask', {question: question.value}, (data) => {
+  post('/api/chat/ask', {question: question.value, sessionId: currentSessionId.value}, (data) => {
     const aiMessage = {
-      user: false,
-      content: marked(data.answer),
-      time: new Date(data.time)
+      question: null,
+      answer: marked(data.answer),
+      createdAt: new Date(data.time)
     };
     messages.value.push(aiMessage);
     loading.value = false;
@@ -66,11 +151,11 @@ const askQuestion = () => {
   question.value = '';
 };
 
+
 const formatDate = (date) => {
   const d = new Date(date);
-  return `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
 };
-
 
 const copyAnswer = (content) => {
   navigator.clipboard.writeText(content)
@@ -82,34 +167,95 @@ const copyAnswer = (content) => {
         ElMessage.error('Failed to copy answer');
       });
 };
+
+onMounted(() => {
+  fetchSessions();
+});
+
+
+const renameSession = (session) => {
+  ElMessageBox.prompt('请输入新的会话名称', '重命名会话', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    inputValue: session.sessionName,
+  })
+      .then(({value}) => {
+        const newName = value.trim();
+        if (newName) {
+          post('/api/chat/rename-session', {id: session.id, sessionName: newName}, (data) => {
+            session.sessionName = data.sessionName;
+            ElMessage.success('会话名称修改成功');
+          }, (message, code, url) => {
+            console.warn(`Request failed: ${url}, status: ${code}, message: ${message}`);
+            ElMessage.error('修改会话名称失败');
+          });
+        } else {
+          ElMessage.warning('会话名称不能为空');
+        }
+      })
+      .catch(() => {
+      });
+};
 </script>
 
+<style lang="scss" scoped>
 
-<style scoped>
-.copy-button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  color: rgba(255, 255, 255, 0.7);
-  transition: color 0.3s ease;
-}
-
-.copy-button:hover {
+.rename-button {
   color: #fff;
+  border-radius: 20px;
+  padding: 2px 5px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(90deg, #6dd5ed, #2193b0);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
 }
 
 .chat-container {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100px;
+  height: 100vh;
   width: 100%;
-  background: linear-gradient(135deg, rgba(106, 17, 203, 0.2), rgba(37, 117, 252, 0.2));
-  color: #fff;
+
   font-family: 'Roboto', sans-serif;
 }
 
+.session-list {
+  width: 250px;
+  border-right: 2px solid gray;
+  padding: 20px;
+  overflow: hidden;
+}
 
+.session-item {
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  background: linear-gradient(135deg, rgba(106, 17, 203, 0.3), rgba(37, 117, 252, 0.3));
+}
+
+.session-item:hover {
+  background: darkgrey;
+}
+
+.session-title {
+  font-weight: bold;
+}
+
+.session-date {
+  font-size: 0.8em;
+
+}
+
+.chat-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%
+}
 
 .chat-box {
   flex: 1;
@@ -125,7 +271,8 @@ const copyAnswer = (content) => {
 .message {
   margin-bottom: 20px;
   display: flex;
-  justify-content: flex-start;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .message-bubble {
@@ -134,41 +281,56 @@ const copyAnswer = (content) => {
   border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
-.user-message {
-  /*background: linear-gradient(135deg, #6a11cb, #2575fc);*/
-  background: black;
-  margin-left: auto;
+.user-message .message-bubble {
+  background: #5e5e5e;
+  align-self: flex-end;
 }
 
-.ai-message {
-  /*background: linear-gradient(135deg, #11998e, #38ef7d);*/
+.ai-message .message-bubble {
+  background: linear-gradient(135deg, rgba(106, 17, 203, 0.3), rgba(37, 117, 252, 0.3)) !important;
+}
 
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
+.dark .ai-message .message-bubble {
+  background: linear-gradient(135deg, #6a11cb, #2575fc) !important;
+}
+
+.question-bubble {
+  background: #555;
+  align-self: flex-start;
+}
+
+.copy-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  transition: color 0.3s ease;
+}
+
+.copy-button:hover {
+
 }
 
 .timestamp {
   font-size: 0.8em;
-  color: rgba(255, 255, 255, 0.7);
   margin-top: 5px;
+  align-self: flex-end;
 }
 
 .input-box {
   display: flex;
-  margin-bottom: 30px;
-  padding: 10px;
-  background-color: rgba(0, 0, 0, 0.2);
+  margin: 20px;
+  background-color: rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin-top: auto; /* 这一行是新增的 */
+
+  padding: 10px;
+  border-radius: 5px;
 }
 
-
 .el-input__inner {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
   border-radius: 20px;
   padding-left: 20px;
 }
@@ -186,65 +348,7 @@ const copyAnswer = (content) => {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.el-loading-mask {
-  background-color: rgba(0, 0, 0, 0.7);
-}
-
-/* Markdown content styles */
-.message-content :global(p) {
-  margin: 0;
-}
-
-.message-content :global(a) {
-  color: #ffeb3b;
-  text-decoration: none;
-}
-
-.message-content :global(pre) {
-  background-color: rgba(0, 0, 0, 0.3);
-  padding: 10px;
-  border-radius: 5px;
-  overflow: auto;
-}
-
-.message-content :global(code) {
-  background-color: rgba(0, 0, 0, 0.3);
-  padding: 2px 4px;
-  border-radius: 3px;
-}
-
-.message-bubble {
-  max-width: 70%;
-  padding: 15px;
-  border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  position: relative;
-}
-
-
-.user-message:before {
-  content: '';
-  position: absolute;
-  top: 10px;
-  right: -10px;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-left: 10px solid #8e2de2;
-}
-
-
-.ai-message:before {
-  content: '';
-  position: absolute;
-  top: 10px;
-  left: -10px;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-right: 10px solid #11998e;
-}
 </style>
-
-
 
 
 

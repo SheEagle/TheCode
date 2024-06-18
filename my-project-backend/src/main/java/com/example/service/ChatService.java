@@ -2,18 +2,23 @@ package com.example.service;
 
 import com.example.entity.dto.Chat;
 import com.example.entity.dto.ChatSession;
+import com.example.entity.vo.request.ChatSessionVO;
 import com.example.entity.vo.response.AnswerVO;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ChatService {
-    public List<Chat> getAllChatsBySessionId(Long sessionId);
+    List<Chat> getAllChatsBySessionId(int sessionId);
 
-    public Chat saveChat(Chat chat);
+    Chat saveChat(Chat chat);
 
-    public List<ChatSession> getAllChatSessionsByUserId(Long userId);
+    List<ChatSession> getAllChatSessionsByUserId(int userId);
 
-    public ChatSession saveChatSession(ChatSession chatSession);
+    ChatSession saveChatSession(String sessionName, Date createdAt, int userId);
 
-    AnswerVO askQuestion(int userId, String question);
+    AnswerVO askQuestion(int userId, int sessionId, String question);
+
+    ChatSession renameSession(int id, String sessionName);
+
 }

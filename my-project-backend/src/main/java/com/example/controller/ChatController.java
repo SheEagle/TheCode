@@ -1,7 +1,9 @@
 package com.example.controller;
 
 import com.example.entity.RestBean;
+import com.example.entity.vo.request.ChatSessionVO;
 import com.example.entity.vo.request.QuestionVO;
+import com.example.entity.vo.request.RenameSessionVO;
 import com.example.entity.vo.response.AnswerVO;
 import com.example.service.ChatService;
 import com.example.utils.Const;
@@ -24,27 +26,47 @@ public class ChatController {
     private ChatService chatService;
 
     @GetMapping("/sessions")
-    public List<ChatSession> getAllChatSessions(@RequestParam Long userId) {
-        return chatService.getAllChatSessionsByUserId(userId);
+    public RestBean<List<ChatSession>> getAllChatSessions(@RequestParam int userId) {
+        return RestBean.success(chatService.getAllChatSessionsByUserId(userId));
     }
+
 
     @GetMapping("/sessions/{sessionId}")
-    public List<Chat> getAllChatsBySessionId(@PathVariable Long sessionId) {
-        return chatService.getAllChatsBySessionId(sessionId);
+    public RestBean<List<Chat>> getAllChatsBySessionId(@PathVariable int sessionId) {
+        return RestBean.success(chatService.getAllChatsBySessionId(sessionId));
     }
 
+
+//    @PostMapping("/ask")
+//    public RestBean<AnswerVO> askQuestion(@Valid @RequestBody QuestionVO vo,
+//                                          @RequestAttribute(Const.ATTR_USER_ID) int id) {
+//        String question = vo.getQuestion();
+//        return RestBean.success(chatService.askQuestion(id, question));
+//    }
 
     @PostMapping("/ask")
     public RestBean<AnswerVO> askQuestion(@Valid @RequestBody QuestionVO vo,
                                           @RequestAttribute(Const.ATTR_USER_ID) int id) {
         String question = vo.getQuestion();
-        return RestBean.success(chatService.askQuestion(id, question));
+        int sessionId = vo.getSessionId();
+        return RestBean.success(chatService.askQuestion(id, sessionId, question));
     }
 
-    @PostMapping("/sessions")
-    public ChatSession createChatSession(@RequestBody ChatSession chatSession, @RequestParam Long userId) {
-        chatSession.setUserId(userId);
-        return chatService.saveChatSession(chatSession);
+//    @PostMapping("/sessions")
+//    public ChatSession createChatSession(@RequestBody ChatSession chatSession, @RequestParam Long userId) {
+//        chatSession.setUserId(userId);
+//        return chatService.saveChatSession(chatSession);
+//    }
+
+    @PostMapping("/create-session")
+    public RestBean<ChatSession> createChatSession(@RequestBody ChatSessionVO vo,
+                                                   @RequestAttribute(Const.ATTR_USER_ID) int userId) {
+        return RestBean.success(chatService.saveChatSession(vo.getSessionName(), vo.getCreatedAt(), userId));
+    }
+
+    @PostMapping("/rename-session")
+    public RestBean<ChatSession> renameSession(@RequestBody RenameSessionVO vo) {
+        return RestBean.success(chatService.renameSession(vo.getId(), vo.getSessionName()));
     }
 
 

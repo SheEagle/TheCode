@@ -15,6 +15,7 @@ public class Chat {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private Integer userId;
+    private Integer sessionId;
     private String question;
     private String answer;
     private Date createdAt;

@@ -1,5 +1,5 @@
 <template>
-  <div style="text-align: center;margin: 0 20px" >
+  <div style="text-align: center;margin: 0 20px">
     <div style="margin-top: 100px">
       <div style="font-size: 25px;font-weight: bold">注册</div>
       <div style="font-size: 14px;color: grey">欢迎注册The Code论坛</div>
@@ -25,7 +25,8 @@
           </el-input>
         </el-form-item>
         <el-form-item prop="password_repeat">
-          <el-input v-model="form.password_repeat" :maxlength="16" type="password" placeholder="重复你的密码" style="height: 50px">
+          <el-input v-model="form.password_repeat" :maxlength="16" type="password" placeholder="重复你的密码"
+                    style="height: 50px">
             <template #prefix>
               <el-icon>
                 <Lock/>
@@ -56,7 +57,7 @@
             <el-col :span="5">
               <el-button type="success" @click="validateEmail"
                          :disabled="!isEmailValid || coldTime > 0" style="height: 50px">
-                {{ coldTime > 0 ? 'Please wait ' + coldTime + ' seconds' : 'to get Verification Code' }}
+                {{ coldTime > 0 ? '请稍后 ' + coldTime + ' 秒' : '获取验证码' }}
               </el-button>
             </el-col>
           </el-row>

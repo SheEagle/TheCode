@@ -474,26 +474,137 @@ function shareWith() {
 
 
 <style lang="scss" scoped>
+//.topic-page {
+//  display: flex;
+//  flex-direction: column;
+//  gap: 10px;
+//  //padding: 10px 0;
+//  background: linear-gradient(to bottom right, rgba(106, 17, 203, 0.1), rgba(37, 117, 252, 0.1));
+//
+//  color: #fff;
+//  padding: 20px;
+//  font-family: 'Roboto', sans-serif;
+//}
+//
+//
+//.topic-main {
+//  display: flex;
+//  //border-radius: 7px;
+//  margin: 0 auto;
+//  background-color: var(--el-bg-color);
+//  width: 800px;
+//  //background: rgba(255, 255, 255, 0.9);
+//  backdrop-filter: blur(20px);
+//  border-radius: 10px;
+//  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+//  padding: 20px;
+//
+//  .topic-main-left {
+//    width: 200px;
+//    padding: 10px;
+//    text-align: center;
+//    border-right: solid 1px var(--el-border-color);
+//
+//    .desc {
+//      font-size: 12px;
+//      color: grey;
+//    }
+//  }
+//
+//  .topic-main-right {
+//    width: 600px;
+//    padding: 10px 20px;
+//
+//    .topic-content {
+//      font-size: 14px;
+//      line-height: 22px;
+//      opacity: 0.8;
+//    }
+//  }
+//}
+//
+//.add-comment {
+//  position: fixed;
+//  bottom: 20px;
+//  right: 20px;
+//  width: 40px;
+//  height: 40px;
+//  border-radius: 50%;
+//  font-size: 18px;
+//  color: var(--el-color-primary);
+//  text-align: center;
+//  line-height: 45px;
+//  background: var(--el-bg-color-overlay);
+//  box-shadow: var(--el-box-shadow-lighter);
+//
+//  &:hover {
+//    background: var(--el-border-color-extra-light);
+//    cursor: pointer;
+//  }
+//
+//}
+//
+//
+//.comment-quote {
+//  font-size: 13px;
+//  color: grey;
+//  // background-color: rgba(94, 94, 94, 0.2);
+//  // padding: 10px;
+//  //margin-top: 10px;
+//  //border-radius: 5px;
+//  background: rgba(255, 255, 255, 0.2);
+//  backdrop-filter: blur(10px);
+//  border-radius: 8px;
+//  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+//  padding: 10px;
+//  margin-top: 10px;
+//}
+//
+//
+.el-avatar {
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.el-link:hover,
+.el-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.share-menu {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 10px;
+  z-index: 1000;
+}
+
+.share-item {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.share-item:hover {
+  background-color: #f0f0f0;
+}
+
 .topic-page {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  //padding: 10px 0;
-  background: linear-gradient(to bottom right, rgba(106, 17, 203, 0.1), rgba(37, 117, 252, 0.1));
-
-  color: #fff;
-  padding: 20px;
-  font-family: 'Roboto', sans-serif;
+  padding: 10px 0;
 }
-
 
 .topic-main {
   display: flex;
-  //border-radius: 7px;
   margin: 0 auto;
   background-color: var(--el-bg-color);
   width: 800px;
-  //background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(20px);
   border-radius: 10px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -558,38 +669,5 @@ function shareWith() {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 10px;
   margin-top: 10px;
-}
-
-
-.el-avatar {
-  border-radius: 50%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.el-link:hover,
-.el-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.share-menu {
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  background: #fff;
-  border: 1px solid #ddd;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
-  padding: 10px;
-  z-index: 1000;
-}
-
-.share-item {
-  padding: 5px;
-  cursor: pointer;
-}
-
-.share-item:hover {
-  background-color: #f0f0f0;
 }
 </style>

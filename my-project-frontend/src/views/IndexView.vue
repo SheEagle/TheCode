@@ -59,6 +59,8 @@ const toggleAside = () => {
   isAsideCollapsed.value = !isAsideCollapsed.value;
   asideWidth.value = isAsideCollapsed.value ? "64px" : "230px";
 };
+
+
 </script>
 
 <template>
@@ -68,44 +70,23 @@ const toggleAside = () => {
       <el-header class="main-content-header">
         <el-image class="logo" src="/src/assets/the.png" style="height: 50px;width: 100px"/>
         <div style="flex: 1;padding: 0 20px;text-align: center">
-          <!--<el-input v-model="searchInput.text" style="width: 100%;max-width: 500px" placeholder="Please Search...">-->
-          <!--  <template #prefix>-->
-          <!--    <el-icon>-->
-          <!--      <Search/>-->
-          <!--    </el-icon>-->
-          <!--  </template>-->
-          <!--  <template #append>-->
-          <!--    <el-select style="width: 120px" v-model="searchInput.type">-->
-          <!--      <el-option value="1" label="Posts"/>-->
-          <!--      <el-option value="2" label="ArtWorks"/>-->
-          <!--    </el-select>-->
-          <!--  </template>-->
-          <!--</el-input>-->
+          <el-input v-model="searchInput.text" style="width: 100%;max-width: 500px" placeholder="搜索论坛相关内容...">
+            <template #prefix>
+              <el-icon>
+                <Search/>
+              </el-icon>
+            </template>
+            <template #append>
+              <el-select style="width: 120px" v-model="searchInput.type">
+                <el-option value="1" label="帖子广场"/>
+                <el-option value="2" label="校园活动"/>
+                <el-option value="3" label="表白墙"/>
+                <el-option value="4" label="教务通知"/>
+              </el-select>
+            </template>
+          </el-input>
         </div>
-        <!--<div class="search-container">-->
-        <!--  <div class="search-box">-->
-        <!--    <el-input v-model="searchInput.text" style="width: 100%;max-width: 500px" placeholder="Please Search...">-->
-        <!--      <template #prefix>-->
-        <!--        <el-icon>-->
-        <!--          <Search/>-->
-        <!--        </el-icon>-->
-        <!--      </template>-->
-        <!--      <template #append>-->
-        <!--        <el-select style="width: 120px" v-model="searchInput.type">-->
-        <!--          <el-option value="1" label="Posts"/>-->
-        <!--          <el-option value="2" label="ArtWorks"/>-->
-        <!--        </el-select>-->
-        <!--      </template>-->
-        <!--    </el-input>-->
-        <!--    <el-button @click="searchPosts" type="primary">Search</el-button>-->
-        <!--  </div>-->
-        <!--  <div class="results-box">-->
-        <!--    <el-card v-for="post in posts" :key="post.id" class="result-card">-->
-        <!--      <h3>{{ post.title }}</h3>-->
-        <!--      <p>{{ post.content }}</p>-->
-        <!--    </el-card>-->
-        <!--  </div>-->
-        <!--</div>-->
+
         <div class="user-info">
           <el-popover placement="bottom" :width="350" trigger="click">
             <template #reference>
@@ -152,18 +133,6 @@ const toggleAside = () => {
                 :class="{ 'admin-border': store.isAdmin }">
             </el-avatar>
             <template #dropdown>
-              <!--<el-dropdown-item>-->
-              <!--  <el-icon>-->
-              <!--    <Operation/>-->
-              <!--  </el-icon>-->
-              <!--  Personal Settings-->
-              <!--</el-dropdown-item>-->
-              <!--<el-dropdown-item>-->
-              <!--  <el-icon>-->
-              <!--    <Message/>-->
-              <!--  </el-icon>-->
-              <!--  Notifications-->
-              <!--</el-dropdown-item>-->
               <el-dropdown-item @click="userLogout" divided>
                 <el-icon>
                   <Back/>
@@ -211,23 +180,7 @@ const toggleAside = () => {
                   </template>
                 </el-menu-item>
               </el-sub-menu>
-              <!--<el-sub-menu index="2">-->
-              <!--  <template #title>-->
-              <!--    <el-icon>-->
-              <!--      <Position/>-->
-              <!--    </el-icon>-->
-              <!--    <span><b>我的空间</b></span>-->
-              <!--  </template>-->
-              <!--  <el-menu-item>-->
-              <!--    <template #title>-->
-              <!--      <el-icon>-->
-              <!--        <Files/>-->
-              <!--      </el-icon>-->
-              <!--      动态-->
-              <!--    </template>-->
-              <!--  </el-menu-item>-->
 
-              <!--</el-sub-menu>-->
               <el-sub-menu index="3">
                 <template #title>
                   <el-icon>
@@ -280,41 +233,6 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-.el-card {
-  border-radius: 10px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-}
-
-.el-menu-item.is-active {
-  background: linear-gradient(to right, rgba(106, 17, 203, 0.50), rgba(37, 117, 252, 0.50)) !important;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  color: #fff;
-}
-
-.main-content-header {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  border-bottom: none;
-}
-
-.main-content-header .logo,
-.main-content-header .user-info .profile {
-  color: #fff;
-}
-
-.main-content-header .user-info .notification:hover,
-.main-content-header .user-info .el-avatar:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-.main-content-header .el-input__inner {
-  border-radius: 20px;
-  background-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
-}
-
 .notification-item {
   transition: .3s;
 
@@ -338,7 +256,7 @@ body {
 
 .main-content-page {
   padding: 0;
-  background-color: #f7f8fa;
+  background-color: #f3f4f5;
 }
 
 .dark .main-content-page {
@@ -389,54 +307,6 @@ body {
   }
 }
 
-.main-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100vh;
-  width: 100%;
-}
-
-//.main-content-header {
-//  display: flex;
-//  align-items: center;
-//  background-color: #fff;
-//  padding: 0 20px;
-//}
-
-.user-info {
-  display: flex;
-  align-items: center;
-}
-
-//.notification {
-//  display: flex;
-//  flex-direction: column;
-//  align-items: center;
-//}
-
-//.profile {
-//  margin-right: 15px;
-//  text-align: right;
-//}
-
-.el-scrollbar {
-  height: 100%;
-}
-
-.input-box {
-  display: flex;
-  padding: 10px;
-  background-color: #fff;
-}
-
-input {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
 button {
   padding: 10px 15px;
   margin-left: 10px;
@@ -450,13 +320,7 @@ button {
   height: 10px;
 }
 
-//.admin-border {
-//  border: 6px solid mediumpurple; /* 金边 */
-//  display: inline-block; /* 确保边框包裹在元素上 */
-//  border-radius: 50%; /* 圆角 */
-//  padding: 2px; /* 边框和头像之间的间隙 */
-//  /* 可以添加box-sizing: border-box;来确保padding不会增加元素的总宽度 */
-//}
+
 .admin-border {
   position: relative; /* 确保伪元素绝对定位相对于这个元素 */
   border: 6px solid mediumpurple; /* 边框颜色 */
