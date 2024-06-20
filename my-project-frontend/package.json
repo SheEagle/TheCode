@@ -12,6 +12,7 @@
     "@vueup/vue-quill": "^1.2.0",
     "@vueuse/core": "^10.3.0",
     "axios": "^1.4.0",
+    "echarts": "^5.5.0",
     "element-plus": "^2.3.9",
     "marked": "^13.0.0",
     "pinia": "^2.1.7",

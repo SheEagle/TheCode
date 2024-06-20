@@ -21,7 +21,6 @@ const store = useStore()
 const loading = ref(true)
 
 const searchInput = reactive({
-  type: '1',
   text: ''
 })
 
@@ -60,6 +59,11 @@ const toggleAside = () => {
   asideWidth.value = isAsideCollapsed.value ? "64px" : "230px";
 };
 
+const searchTopics = () => {
+  router.push({name: 'topic-list', query: {search: searchInput.text}});
+  searchInput.text = '';
+};
+
 
 </script>
 
@@ -70,19 +74,12 @@ const toggleAside = () => {
       <el-header class="main-content-header">
         <el-image class="logo" src="/src/assets/the.png" style="height: 50px;width: 100px"/>
         <div style="flex: 1;padding: 0 20px;text-align: center">
-          <el-input v-model="searchInput.text" style="width: 100%;max-width: 500px" placeholder="搜索论坛相关内容...">
+          <el-input v-model="searchInput.text" style="width: 100%;max-width: 500px" placeholder="搜索论坛相关内容..."
+                    @keydown.enter="searchTopics">
             <template #prefix>
               <el-icon>
                 <Search/>
               </el-icon>
-            </template>
-            <template #append>
-              <el-select style="width: 120px" v-model="searchInput.type">
-                <el-option value="1" label="帖子广场"/>
-                <el-option value="2" label="校园活动"/>
-                <el-option value="3" label="表白墙"/>
-                <el-option value="4" label="教务通知"/>
-              </el-select>
             </template>
           </el-input>
         </div>
@@ -176,7 +173,7 @@ const toggleAside = () => {
                       <ChatLineRound/>
                     </el-icon>
                     AI问答
-                    <el-tag style="margin-left: 10px" size="small">施工中……</el-tag>
+                    <!--<el-tag style="margin-left: 10px" size="small">施工中……</el-tag>-->
                   </template>
                 </el-menu-item>
               </el-sub-menu>
@@ -256,7 +253,7 @@ body {
 
 .main-content-page {
   padding: 0;
-  background-color: #f3f4f5;
+  background-color: #eeeeee;
 }
 
 .dark .main-content-page {
@@ -327,9 +324,7 @@ button {
   border-radius: 50%; /* 圆角 */
   display: inline-block;
   overflow: hidden; /* 确保内容不会溢出边框 */
-  box-shadow: 0 0 10px rgba(128, 0, 128, 0.5), /* 外部阴影 */
-  0 0 20px rgba(128, 0, 128, 0.4), /* 外部阴影 */
-  inset 0 0 5px rgba(255, 255, 255, 0.6); /* 内部高光 */
+  box-shadow: 0 0 10px rgba(128, 0, 128, 0.5), /* 外部阴影 */ 0 0 20px rgba(128, 0, 128, 0.4), /* 外部阴影 */ inset 0 0 5px rgba(255, 255, 255, 0.6); /* 内部高光 */
   transition: box-shadow 0.3s ease-in-out; /* 平滑过渡阴影效果 */
 }
 
@@ -361,8 +356,7 @@ button {
 
 /* 鼠标悬停效果 */
 .admin-border:hover {
-  box-shadow: 0 0 20px mediumpurple, /* 更大的阴影 */
-  0 0 30px mediumpurple,
+  box-shadow: 0 0 20px mediumpurple, /* 更大的阴影 */ 0 0 30px mediumpurple,
   inset 0 0 10px rgba(255, 255, 255, 0.8);
 }
 
@@ -370,4 +364,39 @@ button {
 .admin-border:hover::after {
   animation: none; /* 停止动画 */
 }
+
+:deep(.el-menu-item.is-active) {
+  background: linear-gradient(90deg, rgba(106, 17, 203, 0.3), rgba(37, 117, 252, 0.3)) !important;
+  color: #ffffff !important; // 白色文字，确保在渐变背景上可读
+  position: relative; // 为伪元素定位
+  overflow: hidden; // 确保光效不会溢出
+}
+
+// 添加一个光效伪元素
+:deep(.el-menu-item.is-active::after) {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+:deep(.el-menu-item.is-active:hover::after) {
+  opacity: 1;
+}
+
+// 子菜单标题也可以添加渐变效果
+:deep(.el-sub-menu.is-active > .el-sub-menu__title) {
+  color: #625DE5A5 !important; // 使用渐变色的起始颜色
+  //background: linear-gradient(90deg, rgba(106, 17, 203, 0.2), rgba(37, 117, 252, 0.2)) !important;
+}
+
+:deep(.el-menu-item:hover), :deep(.el-sub-menu__title:hover) {
+  background: linear-gradient(90deg, rgba(106, 17, 203, 0.1), rgba(37, 117, 252, 0.1)) !important;
+}
+
 </style>

@@ -26,20 +26,64 @@ function deleteCollect(index, tid) {
 }
 </script>
 
+<!--<template>-->
+<!--  <el-drawer :model-value="show" @close="emit('close')" @open="init" title="我的收藏夹">-->
+<!--    <div class="collect-list">-->
+<!--      <light-card v-for="(item, index) in list" class="topic-card"-->
+<!--                  @click="router.push(`/index/topic-detail/${item.id}`)">-->
+<!--        <topic-tag :type="item.type"/>-->
+<!--        <div class="title">-->
+<!--          <b>{{ item.title }}</b>-->
+<!--        </div>-->
+<!--        <el-link type="danger" @click.stop="deleteCollect(index, item.id)">Delete</el-link>-->
+<!--      </light-card>-->
+<!--    </div>-->
+<!--  </el-drawer>-->
+<!--</template>-->
+<!--<template>-->
+<!--  <el-drawer :model-value="show" @close="emit('close')" @open="init" title="我的收藏夹">-->
+<!--    <div class="collect-list">-->
+<!--      <light-card v-for="(item, index) in list" :key="index" class="topic-card"-->
+<!--                  @click="item.id ? router.push(`/index/topic-detail/${item.id}`) : null">-->
+<!--        <topic-tag v-if="item.id" :type="item.type"/>-->
+<!--        <div class="title" v-if="item.id">-->
+<!--          <b v-if="item.id">{{ item.title }}</b>-->
+<!--        </div>-->
+<!--        <el-link v-if="item.id" type="danger" @click.stop="deleteCollect(index, item.id)">Delete</el-link>-->
+<!--      </light-card>-->
+<!--    </div>-->
+<!--  </el-drawer>-->
+<!--</template>-->
+<!--<template>-->
+<!--  <el-drawer :model-value="show" @close="emit('close')" @open="init" title="我的收藏夹">-->
+<!--    <div class="collect-list">-->
+<!--      <light-card v-for="(item, index) in list" :key="index" v-if="item.id" class="topic-card"-->
+<!--                  @click="router.push(`/index/topic-detail/${item.id}`)">-->
+<!--        <topic-tag :type="item.type"/>-->
+<!--        <div class="title">-->
+<!--          <b>{{ item.title }}</b>-->
+<!--        </div>-->
+<!--        <el-link type="danger" @click.stop="deleteCollect(index, item.id)">Delete</el-link>-->
+<!--      </light-card>-->
+<!--    </div>-->
+<!--  </el-drawer>-->
+<!--</template>-->
 <template>
   <el-drawer :model-value="show" @close="emit('close')" @open="init" title="我的收藏夹">
     <div class="collect-list">
-      <light-card v-for="(item, index) in list" class="topic-card"
-                  @click="router.push(`/index/topic-detail/${item.id}`)">
-        <topic-tag :type="item.type"/>
+      <light-card v-for="(item, index) in list" :key="index" class="topic-card"
+                  @click="item.id ? router.push(`/index/topic-detail/${item.id}`) : null">
+        <topic-tag v-if="item.id" :type="item.type"/>
         <div class="title">
-          <b>{{ item.title }}</b>
+          <b v-if="item.id">{{ item.title }}</b>
+          <b v-else>帖子已被删除</b>
         </div>
-        <el-link type="danger" @click.stop="deleteCollect(index, item.id)">Delete</el-link>
+        <el-link v-if="item.id" type="danger" @click.stop="deleteCollect(index, item.id)">Delete</el-link>
       </light-card>
     </div>
   </el-drawer>
 </template>
+
 
 <style lang="scss" scoped>
 .collect-list {

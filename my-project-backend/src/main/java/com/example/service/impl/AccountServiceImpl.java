@@ -5,10 +5,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.entity.dto.Account;
 import com.example.entity.dto.AccountDetails;
 import com.example.entity.dto.AccountPrivacy;
+import com.example.entity.dto.UserPostStatistics;
 import com.example.entity.vo.request.*;
+import com.example.entity.vo.response.StatisticsVO;
 import com.example.mapper.AccountDetailsMapper;
 import com.example.mapper.AccountMapper;
 import com.example.mapper.AccountPrivacyMapper;
+import com.example.mapper.UserPostStatisticsMapper;
 import com.example.service.AccountService;
 import com.example.utils.Const;
 import com.example.utils.FlowUtils;
@@ -54,6 +57,8 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     AccountPrivacyMapper privacyMapper;
     @Resource
     AccountDetailsMapper detailsMapper;
+    @Resource
+    UserPostStatisticsMapper statisticsMapper;
 
     /**
      * 从数据库中通过用户名或邮箱查找用户详细信息
@@ -109,7 +114,8 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         if (!code.equals(info.getCode())) return "Wrong code, please check and re-enter";
         if (this.existsAccountByEmail(email)) return "This e-mail address is already registered";
         String username = info.getUsername();
-        if (this.existsAccountByUsername(username)) return "This username is already used by someone else, please change it again!";
+        if (this.existsAccountByUsername(username))
+            return "This username is already used by someone else, please change it again!";
         String password = passwordEncoder.encode(info.getPassword());
         Account account = new Account(null, info.getUsername(),
                 password, email, Const.ROLE_DEFAULT, null, new Date());
@@ -197,6 +203,17 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
                 update();
 
         return success ? null : "An unknown error has occurred";
+    }
+
+    @Override
+    public StatisticsVO getStatistics(int id) {
+        UserPostStatistics userPostStatistics = statisticsMapper.queryById(id);
+        StatisticsVO vo = new StatisticsVO();
+        vo.setTotalCollects(userPostStatistics.getTotalCollects());
+        vo.setTotalLikes(userPostStatistics.getTotalLikes());
+        vo.setTotalComments(userPostStatistics.getTotalComments());
+        return vo;
+
     }
 
 

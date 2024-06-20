@@ -10,6 +10,7 @@ import com.example.entity.vo.request.PrivacySaveVO;
 import com.example.entity.vo.response.AccountDetailsVO;
 import com.example.entity.vo.response.AccountPrivacyVO;
 import com.example.entity.vo.response.AccountVO;
+import com.example.entity.vo.response.StatisticsVO;
 import com.example.service.AccountDetailsService;
 import com.example.service.AccountPrivacyService;
 import com.example.service.AccountService;
@@ -32,6 +33,11 @@ public class AccountController {
 
     @Resource
     AccountPrivacyService privacyService;
+
+    @GetMapping("/statistics")
+    public RestBean<StatisticsVO> statistics(@RequestAttribute(Const.ATTR_USER_ID) int id) {
+        return RestBean.success(service.getStatistics(id));
+    }
 
     @GetMapping("/info")
     public RestBean<AccountVO> info(@RequestAttribute(Const.ATTR_USER_ID) int id) {

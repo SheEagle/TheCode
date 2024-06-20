@@ -6,7 +6,8 @@ const store = useStore()
 
 get('/api/forum/types', data => {
   const array = []
-  array.push({name: '全部', id: 0, color: 'linear-gradient(45deg, white, red, orange, gold, green, blue)'})
+  array.push({name: '最热', id: -1, color: 'linear-gradient(45deg, white, red, orange, gold, green, blue)'})
+  array.push({name: '最新', id: 0, color: 'linear-gradient(to right, #6a11cb, #2575fc)'})
   data.forEach(d => array.push(d))
   store.forum.types = array
 })

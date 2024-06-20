@@ -54,8 +54,8 @@ public class ForumController {
 
     @GetMapping("/list-topic")
     public RestBean<List<TopicPreviewVO>> listTopic(@RequestParam @Min(0) int page
-            , @RequestParam @Min(0) int type) {
-        return RestBean.success(topicService.listTopicByPage(page + 1, type));
+            , @RequestParam @Min(0) int type, @RequestParam(required = false) String search) {
+        return RestBean.success(topicService.listTopicByPage(page + 1, type,search));
 
     }
 
@@ -145,5 +145,6 @@ public class ForumController {
         role = role.substring(5);
         return Const.ROLE_ADMIN.equals(role);
     }
+
 
 }

@@ -23,7 +23,7 @@
         <div class="chat-box">
           <el-scrollbar class="scrollbar" style="height: 100%">
             <div v-for="(message, index) in messages" :key="index" class="message">
-              <div class="message-bubble question-bubble" v-if="message.question">
+              <div class="message-bubble question-bubble" v-if="message.question" style="background: #d9d9e8">
                 <div class="message-content">{{ message.question }}</div>
                 <el-button class="copy-button" style="width:20px" type="text" @click="copyAnswer(message.question)">
                   <el-icon>
@@ -33,8 +33,10 @@
                 <div class="timestamp">{{ formatDate(message.createdAt) }}</div>
               </div>
 
-              <div style="background: linear-gradient(135deg, #6a11cb, #2575fc);margin-top: 10px" class="message-bubble"
-                   v-if="message.answer">
+              <div
+                  style="margin-top: 10px;background: linear-gradient(135deg, rgba(106, 17, 203, 0.3), rgba(37, 117, 252, 0.3));"
+                  class="message-bubble"
+                  v-if="message.answer">
                 <div class="message-content" v-html="marked(message.answer)"></div>
                 <el-button class="copy-button" style="width:20px" type="text" @click="copyAnswer(message.answer)">
                   <el-icon>
@@ -48,9 +50,9 @@
           </el-scrollbar>
         </div>
 
-        <div class="input-box">
+        <div class="input-box" style="margin-bottom: 80px">
           <el-input v-model="question" placeholder="想要问点什么呢?" @keyup.enter="askQuestion"/>
-          <el-button @click="askQuestion" type="primary" icon="el-icon-s-promotion">发送</el-button>
+          <el-button @click="askQuestion" type="primary" icon="el-icon-s-promotion" >发送</el-button>
         </div>
       </div>
 
@@ -160,7 +162,7 @@ const formatDate = (date) => {
 const copyAnswer = (content) => {
   navigator.clipboard.writeText(content)
       .then(() => {
-        ElMessage.success('Answer copied to clipboard');
+        ElMessage.success('复制成功！');
       })
       .catch((err) => {
         console.error('Failed to copy answer: ', err);
@@ -222,7 +224,7 @@ const renameSession = (session) => {
 
 .session-list {
   width: 250px;
-  border-right: 2px solid gray;
+  border-right: 2px solid #d2d1d1;
   padding: 20px;
   overflow: hidden;
 }
@@ -236,8 +238,13 @@ const renameSession = (session) => {
   background: linear-gradient(135deg, rgba(106, 17, 203, 0.3), rgba(37, 117, 252, 0.3));
 }
 
+
+//.session-item {
+//  background: #f5f5f5;
+//}
+
 .session-item:hover {
-  background: darkgrey;
+  background: #e5e5e5;
 }
 
 .session-title {
@@ -294,14 +301,16 @@ const renameSession = (session) => {
   background: linear-gradient(135deg, rgba(106, 17, 203, 0.3), rgba(37, 117, 252, 0.3)) !important;
 }
 
-.dark .ai-message .message-bubble {
-  background: linear-gradient(135deg, #6a11cb, #2575fc) !important;
-}
+//.dark .ai-message .message-bubble {
+//  background: linear-gradient(135deg, rgba(106, 17, 203, 0.4), rgba(37, 117, 252, 0.4)) !important;
+//}
 
 .question-bubble {
-  background: #555;
+  //background: #555;
+  background: #e0e0e0;
   align-self: flex-start;
 }
+
 
 .copy-button {
   position: absolute;
@@ -323,7 +332,7 @@ const renameSession = (session) => {
 .input-box {
   display: flex;
   margin: 20px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.09);
   backdrop-filter: blur(20px);
 
   padding: 10px;
@@ -346,6 +355,19 @@ const renameSession = (session) => {
 .el-button:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.el-input__inner {
+  background-color: #fff;
+  border-color: rgba(224, 224, 224, 0.99);
+}
+
+.el-button {
+  background: rgba(103, 185, 210, 0.49);
+}
+
+.el-button:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 </style>

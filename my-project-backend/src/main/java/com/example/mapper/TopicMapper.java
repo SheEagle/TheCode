@@ -10,6 +10,8 @@ import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 @Mapper
 public interface TopicMapper extends BaseMapper<Topic> {
 
@@ -63,6 +65,39 @@ public interface TopicMapper extends BaseMapper<Topic> {
              where db_topic_interact_collect.uid = #{uid}
             """)
     List<Topic> collectTopics(int uid);
+
+    //    @Select("""
+//            select t.*,
+//                   (select count(*) from db_topic_interact_like where tid = t.id) as likeCount,
+//                   (select count(*) from db_topic_interact_collect where tid = t.id) as collectCount,
+//                   (select count(*) from db_topic_comment where tid = t.id) as commentCount
+//            from db_topic t
+//            order by (likeCount * 2 + collectCount * 1.5 + commentCount * 3) desc
+//            limit #{pageNumber}, 10
+//            """)
+//    List<Topic> listHotTopics(int pageNumber);
+    @Select("""
+                select t.*, 
+                       (select count(*) from db_topic_interact_like where tid = t.id) as likeCount,
+                       (select count(*) from db_topic_interact_collect where tid = t.id) as collectCount,
+                       (select count(*) from db_topic_comment where tid = t.id) as commentCount
+                from db_topic t
+                order by (likeCount * 2 + collectCount * 1.5 + commentCount * 3) desc
+                limit #{pageNumber}, 10
+            """)
+    List<Topic> listHotTopics(@Param("pageNumber") int pageNumber);
+
+    @Select("""
+                select t.*, 
+                       (select count(*) from db_topic_interact_like where tid = t.id) as likeCount,
+                       (select count(*) from db_topic_interact_collect where tid = t.id) as collectCount,
+                       (select count(*) from db_topic_comment where tid = t.id) as commentCount
+                from db_topic t
+                where t.title like concat('%', #{search}, '%') or t.content like concat('%', #{search}, '%')
+                order by (likeCount * 2 + collectCount * 1.5 + commentCount * 3) desc
+                limit #{start}, 10
+            """)
+    List<Topic> listHotTopicsWithSearch(@Param("search") String search, @Param("start") int start);
 
 
 }

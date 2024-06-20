@@ -17,7 +17,7 @@ public interface TopicService {
 
     String createTopic(int uid, TopicCreateVO vo);
 
-    List<TopicPreviewVO> listTopicByPage(int page, int type);
+    List<TopicPreviewVO> listTopicByPage(int page, int type,String search);
 
     List<TopicTopVO> listTopTopics();
 

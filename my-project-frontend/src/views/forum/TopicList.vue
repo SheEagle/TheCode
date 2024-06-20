@@ -13,7 +13,7 @@ import {
   Microphone, CircleCheck, Star, FolderOpened, ArrowRightBold
 } from "@element-plus/icons-vue";
 import Weather from "@/components/Weather.vue";
-import {computed, reactive, ref, watch} from "vue";
+import {computed, onMounted, reactive, ref, watch} from "vue";
 import {get} from "@/net";
 import {ElMessage} from "element-plus";
 import TopicEditor from "@/components/TopicEditor.vue";
@@ -23,6 +23,8 @@ import ColorDot from "@/components/ColorDot.vue";
 import router from "@/router";
 import TopicTag from "@/components/TopicTag.vue";
 import TopicCollectList from "@/components/TopicCollectList.vue";
+import {useRoute} from "vue-router";
+import * as echarts from "echarts";
 
 const store = useStore()
 
@@ -35,32 +37,45 @@ const weather = reactive({
 const editor = ref(false)
 const topics = reactive({
   list: [],
-  type: 0,
+  type: -1,
   page: 0,
   end: false,
   top: []
 })
 const collects = ref(false)
 
-watch(() => topics.type, () => resetList(), {immediate: true})
 
 const today = computed(() => {
   const date = new Date()
   return `${date.getFullYear()} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日`
 })
 
+const route = useRoute();
+const search = ref(route.query.search || '');
+
+watch(() => topics.type, () => resetList(), {immediate: true})
+
+watch(() => route.query.search, () => {
+  search.value = route.query.search || '';
+  resetList();
+});
+
 get('/api/forum/top-topic', data => topics.top = data)
 
 function updateList() {
-  if (topics.end) return
-  get(`/api/forum/list-topic?page=${topics.page}&type=${topics.type}`, data => {
+  if (topics.end) return;
+  const params = new URLSearchParams({'page': topics.page, 'type': topics.type});
+  if (search.value) {
+    params.append('search', search.value);
+  }
+  get(`/api/forum/list-topic?${params.toString()}`, data => {
     if (data) {
-      data.forEach(d => topics.list.push(d))
-      topics.page++
+      data.forEach(d => topics.list.push(d));
+      topics.page++;
     }
     if (!data || data.length < 10)
-      topics.end = true
-  })
+      topics.end = true;
+  });
 }
 
 function onTopicCreate() {
@@ -93,13 +108,296 @@ navigator.geolocation.getCurrentPosition(position => {
   timeout: 3000,
   enableHighAccuracy: true
 })
+
+
+// Fetch statistics data and initialize chart
+const statistics = ref({
+  totalLikes: 0,
+  totalCollects: 0,
+  totalComments: 0
+});
+
+// const initChart = () => {
+//   const chartDom = document.getElementById('gauge-chart');
+//   const myChart = echarts.init(chartDom);
+//
+//   const option = {
+//     series: [
+//       {
+//         type: 'gauge',
+//         startAngle: 90,
+//         endAngle: -270,
+//         radius: '100%',
+//         pointer: {
+//           show: false
+//         },
+//         progress: {
+//           show: true,
+//           overlap: false,
+//           roundCap: true,
+//           clip: false,
+//           itemStyle: {
+//             borderWidth: 1,
+//             borderColor: '#464646'
+//           }
+//         },
+//         axisLine: {
+//           lineStyle: {
+//             width: 30
+//           }
+//         },
+//         splitLine: {
+//           show: false,
+//           distance: 0,
+//           length: 10
+//         },
+//         axisTick: {
+//           show: false
+//         },
+//         axisLabel: {
+//           show: false,
+//           distance: 50
+//         },
+//         data: [
+//           {
+//             value: statistics.value.totalLikes,
+//             name: '收获点赞数',
+//             title: {
+//               offsetCenter: ['0%', '-50%']
+//             },
+//             detail: {
+//               valueAnimation: true,
+//               offsetCenter: ['0%', '-30%']
+//             }
+//           },
+//           {
+//             value: statistics.value.totalCollects,
+//             name: '收获收藏数',
+//             title: {
+//               offsetCenter: ['0%', '-10%']
+//             },
+//             detail: {
+//               valueAnimation: true,
+//               offsetCenter: ['0%', '10%']
+//             }
+//           },
+//           {
+//             value: statistics.value.totalComments,
+//             name: '收获评论数',
+//             title: {
+//               offsetCenter: ['0%', '30%']
+//             },
+//             detail: {
+//               valueAnimation: true,
+//               offsetCenter: ['0%', '50%']
+//             }
+//           }
+//         ],
+//         title: {
+//           fontSize: 14
+//         },
+//         detail: {
+//           width: 50,
+//           height: 14,
+//           fontSize: 14,
+//           color: 'inherit',
+//           borderColor: 'inherit',
+//           borderRadius: 20,
+//           borderWidth: 1,
+//           formatter: '{value}'
+//         }
+//       }
+//     ]
+//   };
+//
+//   myChart.setOption(option);
+// };
+
+// onMounted(() => {
+//   get('/api/user/statistics', data => {
+//     statistics.value = data;
+//     initChart();
+//   }, error => {
+//     console.error('Failed to fetch statistics:', error);
+//     ElMessage.error('无法获取统计数据');
+//   });
+// });
+
+const initChart = () => {
+  const chartDom = document.getElementById('gauge-chart');
+  const myChart = echarts.init(chartDom);
+
+  const option = {
+    series: [
+      {
+        type: 'gauge',
+        startAngle: 90,
+        endAngle: -270,
+        radius: '100%',
+        pointer: {
+          show: false
+        },
+        progress: {
+          show: true,
+          overlap: false,
+          roundCap: true,
+          clip: false,
+          itemStyle: {
+            borderWidth: 1,
+            borderColor: '#464646'
+          }
+        },
+        axisLine: {
+          lineStyle: {
+            width: 30
+          }
+        },
+        splitLine: {
+          show: false,
+          distance: 0,
+          length: 10
+        },
+        axisTick: {
+          show: false
+        },
+        axisLabel: {
+          show: false,
+          distance: 50
+        },
+        data: [
+          {
+            value: statistics.value.totalLikes,
+            name: '点赞数',
+            title: {
+              offsetCenter: ['0%', '-50%']
+            },
+            detail: {
+              valueAnimation: true,
+              offsetCenter: ['0%', '-30%']
+            },
+            itemStyle: {
+              color: 'rgba(106, 17, 203, 0.35)' // 金色
+            },
+          },
+          {
+            value: statistics.value.totalCollects,
+            name: '收藏数',
+            title: {
+              offsetCenter: ['0%', '-10%']
+            },
+            detail: {
+              valueAnimation: true,
+              offsetCenter: ['0%', '10%']
+            },
+            itemStyle: {
+              color: 'rgba(37, 117, 252, 0.35)' // 金色
+            },
+          },
+          {
+            value: statistics.value.totalComments,
+            name: '评论数',
+            title: {
+              offsetCenter: ['0%', '30%']
+            },
+            detail: {
+              valueAnimation: true,
+              offsetCenter: ['0%', '50%']
+            }
+          }
+        ],
+        title: {
+          fontSize: 14
+        },
+        detail: {
+          width: 50,
+          height: 14,
+          fontSize: 14,
+          color: 'inherit',
+          borderColor: 'inherit',
+          borderRadius: 20,
+          borderWidth: 1,
+          formatter: '{value}次'
+        }
+      }
+    ]
+  };
+
+  myChart.setOption(option);
+
+  return myChart;
+};
+
+const updateChart = (chart) => {
+  const option = chart.getOption();
+  option.series[0].data = [
+    {
+      value: statistics.value.totalLikes,
+      name: '收获点赞',
+      title: {
+        offsetCenter: ['0%', '-50%']
+      },
+      detail: {
+        valueAnimation: true,
+        offsetCenter: ['0%', '-30%']
+      },
+      itemStyle: {
+        color: 'rgba(106, 17, 203, 0.35)' // 金色
+      },
+    },
+    {
+      value: statistics.value.totalCollects,
+      name: '收获收藏',
+      title: {
+        offsetCenter: ['0%', '-10%']
+      },
+      detail: {
+        valueAnimation: true,
+        offsetCenter: ['0%', '10%']
+      },
+      itemStyle: {
+        color: 'rgba(37, 117, 252, 0.35)' // 金色
+      },
+    },
+    {
+      value: statistics.value.totalComments,
+      name: '收获评论',
+      title: {
+        offsetCenter: ['0%', '30%']
+      },
+      detail: {
+        valueAnimation: true,
+        offsetCenter: ['0%', '50%']
+      }
+    }
+  ];
+
+  chart.setOption(option);
+};
+
+onMounted(() => {
+  const chart = initChart();
+  const fetchStatistics = () => {
+    get('/api/user/statistics', data => {
+      statistics.value = data;
+      updateChart(chart);
+    }, error => {
+      console.error('Failed to fetch statistics:', error);
+      ElMessage.error('无法获取统计数据');
+    });
+  };
+
+  fetchStatistics(); // Initial fetch
+  setInterval(fetchStatistics, 600000); // Fetch every 10 minutes
+});
+
+
 </script>
 
 <template>
   <div style="display: flex;margin: 20px auto;gap: 20px;max-width: 90%">
     <div style="flex: 1">
       <!--发表帖子-->
-      <light-card style="background:linear-gradient(to right, rgba(106, 17, 203, 0.70), rgba(37, 117, 252, 0.70)) ;">
+      <light-card style="background:linear-gradient(to right, rgba(106, 17, 203, 0.35), rgba(37, 117, 252, 0.35)) ;">
         <div class="create-topic" @click="editor = true">
           <el-icon>
             <EditPen/>
@@ -126,7 +424,8 @@ navigator.geolocation.getCurrentPosition(position => {
       </light-card>
 
       <!--置顶-->
-      <light-card style="margin-top: 10px;display: flex;flex-direction: column;gap: 10px;background: linear-gradient(to right, rgba(106, 17, 203, 0.50), rgba(37, 117, 252, 0.50))">
+      <light-card
+          style="margin-top: 10px;display: flex;flex-direction: column;gap: 10px;background: linear-gradient(to right, rgba(106, 17, 203, 0.35), rgba(37, 117, 252, 0.35))">
         <div v-for="item in topics.top" class="top-topic" @click="router.push(`/index/topic-detail/${item.id}`)">
           <el-tag type="info" size="small">置顶</el-tag>
           <div>{{ item.title }}</div>
@@ -194,6 +493,7 @@ navigator.geolocation.getCurrentPosition(position => {
             </light-card>
           </div>
         </div>
+        <el-empty v-else description="没有相关帖子"></el-empty>
       </transition>
     </div>
 
@@ -227,22 +527,26 @@ navigator.geolocation.getCurrentPosition(position => {
         </light-card>
 
 
-
+        <!--<light-card-->
+        <!--    style="margin-top: 10px; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">-->
+        <!--  &lt;!&ndash;<div style="font-weight: bold">&ndash;&gt;-->
+        <!--  &lt;!&ndash;  <el-icon>&ndash;&gt;-->
+        <!--  &lt;!&ndash;    <Calendar/>&ndash;&gt;-->
+        <!--  &lt;!&ndash;  </el-icon>&ndash;&gt;-->
+        <!--  &lt;!&ndash;  天气&ndash;&gt;-->
+        <!--  &lt;!&ndash;</div>&ndash;&gt;-->
+        <!--  &lt;!&ndash;<el-divider style="border-color: rgba(255, 255, 255, 0.5); margin: 10px 0"/>&ndash;&gt;-->
+        <!--  &lt;!&ndash;<weather :data="weather"/>&ndash;&gt;-->
+        <!--  <div id="gauge-chart" style="width: 500px;height:500px;"></div>-->
+        <!--</light-card>-->
         <light-card
-            style="margin-top: 10px; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-          <div style="font-weight: bold">
-            <el-icon>
-              <Calendar/>
-            </el-icon>
-            天气
-          </div>
-          <el-divider style="border-color: rgba(255, 255, 255, 0.5); margin: 10px 0"/>
-          <weather :data="weather"/>
+            style="margin-top: 10px; padding: 10px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2)">
+          <div id="gauge-chart" style="width: 100%;height:280px;"></div>
         </light-card>
 
 
         <light-card
-            style="margin-top: 10px; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+            style="margin-top: 10px; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2)">
           <div style="display: flex; justify-content: space-between; margin-bottom: 10px;font-size: 15px">
             <div>日期</div>
             <div>{{ today }}</div>
@@ -296,158 +600,11 @@ navigator.geolocation.getCurrentPosition(position => {
 </template>
 
 <style lang="less" scoped>
-//.collect-list-button {
-//  font-size: 14px;
-//  display: flex;
-//  justify-content: space-between;
-//  transition: .3s;
-//
-//  &:hover {
-//    cursor: pointer;
-//    opacity: 0.6;
-//  }
-//}
-//
-//.top-topic {
-//  display: flex;
-//
-//  div:first-of-type {
-//    font-size: 14px;
-//    margin-left: 10px;
-//    font-weight: bold;
-//    opacity: 0.8;
-//    transition: color .3s;
-//
-//    &:hover {
-//      color: grey;
-//    }
-//  }
-//
-//  div:nth-of-type(2) {
-//    flex: 1;
-//    color: grey;
-//    font-size: 13px;
-//    text-align: right;
-//  }
-//
-//  &:hover {
-//    cursor: pointer;
-//  }
-//}
-//
-//.type-select-card {
-//  background-color: #f5f5f5;
-//  padding: 2px 7px;
-//  font-size: 14px;
-//  border-radius: 3px;
-//  box-sizing: border-box;
-//  transition: background-color .3s;
-//
-//  &.active {
-//    border: solid 1px #ead4c4;
-//  }
-//
-//  &:hover {
-//    cursor: pointer;
-//    background-color: #dadada;
-//  }
-//}
-//
-//.topic-card {
-//  padding: 15px;
-//  transition: scale .3s;
-//  //background: linear-gradient(to bottom right, rgba(106, 17, 203, 0.00), rgba(37, 117, 252, 0.00));
-//  //color: #fff;
-//  font-family: 'Roboto', sans-serif;
-//  //transition: all 0.3s ease;
-//
-//  &:hover {
-//    scale: 1.015;
-//    cursor: pointer;
-//
-//  }
-//
-//  .topic-content {
-//    font-size: 13px;
-//    color: grey;
-//    margin: 5px 0;
-//    display: -webkit-box;
-//    -webkit-box-orient: vertical;
-//    -webkit-line-clamp: 3;
-//    overflow: hidden;
-//    text-overflow: ellipsis;
-//  }
-//
-//  .topic-image {
-//    width: 100%;
-//    height: 100%;
-//    max-height: 110px;
-//    //border-radius: 5px;
-//    border-radius: 8px;
-//    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-//  }
-//}
-//
-//.info-text {
-//  display: flex;
-//  justify-content: space-between;
-//  color: grey;
-//  font-size: 14px;
-//}
-//
-//.friend-link {
-//  border-radius: 5px;
-//  overflow: hidden;
-//}
-//
-//.create-topic {
-//  background-color: #efefef;
-//  border-radius: 5px;
-//  height: 40px;
-//  color: grey;
-//  font-size: 14px;
-//  line-height: 40px;
-//  padding: 0 10px;
-//
-//  &:hover {
-//    cursor: pointer;
-//  }
-//}
-//
-//.dark {
-//  .create-topic {
-//    background-color: #232323;
-//  }
-//
-//  .type-select-card {
-//    background-color: #282828;
-//
-//    &.active {
-//      border: solid 1px #64594b;
-//    }
-//
-//    &:hover {
-//      background-color: #5e5e5e;
-//    }
-//  }
-//}
-//
-//
-//.friend-link {
-//  border-radius: 8px;
-//  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-//  overflow: hidden;
-//  transition: all 0.3s ease;
-//}
-//
-//.friend-link:hover {
-//  transform: scale(1.03);
-//}
-//
 .collect-list-button {
-  background: linear-gradient(135deg, #8e2de2, #4a00e0);
+  //background: linear-gradient(135deg, rgba(142, 45, 226, 0.5), rgba(74, 0, 224, 0.5));
   //background: linear-gradient(90deg, #FEE140 0%, #FA709A 100%);
-  color: #fff;
+  // background:linear-gradient(to right, rgba(106, 17, 203, 0.30), rgba(37, 117, 252, 0.30));
+  //color: #fff;
   padding: 10px;
   border-radius: 8px;
   display: flex;
@@ -460,41 +617,7 @@ navigator.geolocation.getCurrentPosition(position => {
   transform: scale(1.03);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
-//
-//.announcement-card {
-//  background: linear-gradient(135deg, rgba(17, 153, 142, 0.1), rgba(56, 239, 125, 0.1));
-//  color: #fff;
-//  padding: 20px;
-//  border-radius: 8px;
-//  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-//}
-//
-//.announcement-card .el-divider--horizontal {
-//  border-color: rgba(255, 255, 255, 0.5);
-//}
-//
-//
-//.weather-card {
-//  background: linear-gradient(135deg, #ffd89b, #19547b);
-//  color: #fff;
-//  padding: 20px;
-//  border-radius: 8px;
-//  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-//}
-//
-//.info-card {
-//  background: linear-gradient(135deg, #667eea, #764ba2);
-//  color: #fff;
-//  padding: 20px;
-//  border-radius: 8px;
-//  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-//}
-//
-//.info-text {
-//  display: flex;
-//  justify-content: space-between;
-//  margin-bottom: 10px;
-//}
+
 .collect-list-button {
   font-size: 14px;
   display: flex;

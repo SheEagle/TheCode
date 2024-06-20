@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -68,6 +69,9 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
 
     @Resource
     TopicCommentMapper commentMapper;
+
+    @Resource
+    HotnessMapper hotnessMapper;
 
     @Resource
     NotificationService notificationService;
@@ -300,23 +304,97 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
 //        }
     }
 
+    //    @Override
+//    public List<TopicPreviewVO> listTopicByPage(int pageNumber, int type, String search) {
+//
+//        String key = Const.FORUM_TOPIC_PREVIEW_CACHE + pageNumber + ":" + type + ":" + (search != null ? search : "");
+//        List<TopicPreviewVO> list = cacheUtils.takeListFromCache(key, TopicPreviewVO.class);
+//        if (list != null)
+//            return list;
+//
+//        Page<Topic> page = Page.of(pageNumber, 10);
+//        //按热度
+//        if (type == -1) {
+//            //按热度和关键词
+//            if (search != null && !search.isEmpty()) {
+//
+//            } else {
+//
+//            }
+//            //不按热度
+//        } else {
+//            //按关键词
+//            if (search != null && !search.isEmpty()) {
+//                if (type == 0) {
+//                    baseMapper.selectPage(page, Wrappers.<Topic>query()
+//                            .like("title", search)
+//                            .or().like("content", search)
+//                            .orderByDesc("time"));
+//                } else {
+//                    baseMapper.selectPage(page, Wrappers.<Topic>query()
+//                            .eq("type", type) // 类型相等
+//                            .and((w) -> w.like("title", search).or().like("content", search)) // 标题或内容中有关键词
+//                            .orderByDesc("time"));
+//                }
+//            } else if (type == 0) {
+//                baseMapper.selectPage(page, Wrappers.<Topic>query().orderByDesc("time"));
+//            } else {
+//                baseMapper.selectPage(page, Wrappers.<Topic>query().eq("type", type).orderByDesc("time"));
+//            }
+//
+//            List<Topic> topics = page.getRecords();
+//            if (topics.isEmpty())
+//                return null;
+//
+//            list = topics.stream().map(this::resolveToPreview).toList();
+//        }
+//
+//        cacheUtils.saveListToCache(key, list, 60);
+//        return list;
+//    }
     @Override
-    public List<TopicPreviewVO> listTopicByPage(int pageNumber, int type) {
-        String key = Const.FORUM_TOPIC_PREVIEW_CACHE + pageNumber + ":" + type;
-        List<TopicPreviewVO> list = cacheUtils.takeListFromCache(key, TopicPreviewVO.class);
-        if (list != null)
-            return list;
-        Page<Topic> page = Page.of(pageNumber, 10);
-        if (type == 0) {
-            baseMapper.selectPage(page, Wrappers.<Topic>query().orderByDesc("time"));
-        } else {
-            baseMapper.selectPage(page, Wrappers.<Topic>query().eq("type", type).orderByDesc("time"));
+    public List<TopicPreviewVO> listTopicByPage(int pageNumber, int type, String search) {
+//        String key = Const.FORUM_TOPIC_PREVIEW_CACHE + pageNumber + ":" + type + ":" + (search != null ? search : "");
+//        List<TopicPreviewVO> list = cacheUtils.takeListFromCache(key, TopicPreviewVO.class);
+//        if (list != null)
+//            return list;
+
+        Page<Hotness> page = new Page<>(pageNumber, 10);
+        QueryWrapper<Hotness> queryWrapper = new QueryWrapper<>();
+
+        // 按热度查询
+        if (type == -1) {
+
+            if (search != null && !search.isEmpty()) {
+                queryWrapper
+                        .and(w -> w.like("title", search).or().like("content", search))
+                        .orderByDesc("hotness");
+            } else {
+                queryWrapper.orderByDesc("hotness");
+            }
         }
-        List<Topic> topics = page.getRecords();
-        if (topics.isEmpty())
+        // 按类型和关键词查询
+        else {
+            // 当type不为0时，查询特定类型的帖子
+            if (type != 0) {
+                queryWrapper.eq("type", type);
+            }
+            // 无论type为何值，都可以添加搜索关键词的条件
+            if (search != null && !search.isEmpty()) {
+                queryWrapper
+                        .and(w -> w.like("title", search).or().like("content", search));
+            }
+            // 如果不需要按时间排序，可以移除下面这行
+            queryWrapper.orderByDesc("time");
+        }
+
+        IPage<Hotness> hotnessPage = hotnessMapper.selectPage(page, queryWrapper);
+        List<Hotness> hotnessList = hotnessPage.getRecords();
+        if (hotnessList.isEmpty())
             return null;
-        list = topics.stream().map(this::resolveToPreview).toList();
-        cacheUtils.saveListToCache(key, list, 60);
+
+        List<TopicPreviewVO> list = hotnessList.stream().map(this::resolveToPreview).collect(Collectors.toList());
+//        cacheUtils.saveListToCache(key, list, 60);
         return list;
     }
 
@@ -760,18 +838,19 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     }
 
 
-    private TopicPreviewVO resolveToPreview(Topic topic) {
+    private TopicPreviewVO resolveToPreview(Hotness topic) {
         TopicPreviewVO vo = new TopicPreviewVO();
         BeanUtils.copyProperties(accountMapper.selectById(topic.getUid()), vo);
         BeanUtils.copyProperties(topic, vo);
-        vo.setLike(baseMapper.interactCount(topic.getId(), "like"));
-        vo.setCollect(baseMapper.interactCount(topic.getId(), "collect"));
+        vo.setLike(baseMapper.interactCount(topic.getTopicId(), "like"));
+        vo.setCollect(baseMapper.interactCount(topic.getTopicId(), "collect"));
         List<String> images = new ArrayList<>();
         StringBuilder previewText = new StringBuilder();
         JSONArray ops = JSONObject.parseObject(topic.getContent()).getJSONArray("ops");
         this.shortContent(ops, previewText, obj -> images.add(obj.toString()));
         vo.setText(previewText.length() > 300 ? previewText.substring(0, 300) : previewText.toString());
         vo.setImages(images);
+        vo.setId(topic.getTopicId());
         return vo;
     }
 

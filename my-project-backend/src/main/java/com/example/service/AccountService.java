@@ -3,6 +3,7 @@ package com.example.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.entity.dto.Account;
 import com.example.entity.vo.request.*;
+import com.example.entity.vo.response.StatisticsVO;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface AccountService extends IService<Account>, UserDetailsService {
@@ -21,4 +22,6 @@ public interface AccountService extends IService<Account>, UserDetailsService {
     String modifyEmail(int id, EmailModifyVO vo);
 
     String changePassword(int id, ChangePasswordVO vo);
+
+    StatisticsVO getStatistics(int id);
 }
