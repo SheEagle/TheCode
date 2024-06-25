@@ -15,19 +15,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface TopicMapper extends BaseMapper<Topic> {
 
-//    @Select("""
-//                select * from db_topic left join db_account on uid=db_account.id
-//                order by `time` desc limit ${start},10
-//            """)
-//    List<Topic> topicList(int start);
-//
-//
-//    @Select("""
-//                select * from db_topic left join db_account on uid=db_account.id
-//                where type=#{type}
-//                order by `time` desc limit ${start},10
-//            """)
-//    List<Topic> topicList2(int start,int type);
 
     @Insert("""
             <script>

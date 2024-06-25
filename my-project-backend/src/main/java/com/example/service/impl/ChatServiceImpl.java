@@ -62,35 +62,6 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
 
     @Override
     public AnswerVO askQuestion(int userId, int sessionId, String question) {
-//        Constants.apiKey = apiKey;
-//        AnswerVO vo = new AnswerVO();
-//        try {
-//            Generation gen = new Generation();
-//            MessageManager msgManager = new MessageManager(10);
-//            Message systemMsg = Message.builder().role(Role.SYSTEM.getValue()).content("你是一个STEM领域专家，你只回答与STEM相关的问题，不要回答其他问题！").build();
-//            Message userMsg = Message.builder().role(Role.USER.getValue()).content(question).build();
-//            msgManager.add(systemMsg);
-//            msgManager.add(userMsg);
-//            QwenParam param = QwenParam.builder().model(Generation.Models.QWEN_TURBO).messages(msgManager.get()).resultFormat(QwenParam.ResultFormat.MESSAGE).build();
-//            GenerationResult result = gen.call(param);
-//            GenerationOutput output = result.getOutput();
-//            Message message = output.getChoices().get(0).getMessage();
-//            String answer = message.getContent();
-//
-//            Chat chat = new Chat();
-//            chat.setUserId(userId);
-//            chat.setQuestion(question);
-//            chat.setAnswer(answer);
-//            this.save(chat);
-//
-//            vo.setAnswer(answer);
-//            vo.setTime(new Date());
-//            return vo;
-//        } catch (Exception e) {
-//            vo.setAnswer("STEM专家现在不在线，请稍后再试～");
-//            vo.setTime(new Date());
-//            return vo;
-//        }
         Constants.apiKey = apiKey;
         AnswerVO vo = new AnswerVO();
         try {

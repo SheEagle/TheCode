@@ -37,12 +37,6 @@ public class ChatController {
     }
 
 
-//    @PostMapping("/ask")
-//    public RestBean<AnswerVO> askQuestion(@Valid @RequestBody QuestionVO vo,
-//                                          @RequestAttribute(Const.ATTR_USER_ID) int id) {
-//        String question = vo.getQuestion();
-//        return RestBean.success(chatService.askQuestion(id, question));
-//    }
 
     @PostMapping("/ask")
     public RestBean<AnswerVO> askQuestion(@Valid @RequestBody QuestionVO vo,
@@ -52,11 +46,7 @@ public class ChatController {
         return RestBean.success(chatService.askQuestion(id, sessionId, question));
     }
 
-//    @PostMapping("/sessions")
-//    public ChatSession createChatSession(@RequestBody ChatSession chatSession, @RequestParam Long userId) {
-//        chatSession.setUserId(userId);
-//        return chatService.saveChatSession(chatSession);
-//    }
+
 
     @PostMapping("/create-session")
     public RestBean<ChatSession> createChatSession(@RequestBody ChatSessionVO vo,

@@ -33,13 +33,7 @@
   background-color: var(--el-bg-color);
 }
 
-/*.welcome-title {*/
-/*  position: absolute;*/
-/*  bottom: 30px;*/
-/*  left: 30px;*/
-/*  color: white;*/
-/*  text-shadow: 0 0 10px black;*/
-/*}*/
+
 
 .welcome-title {
   position: absolute;

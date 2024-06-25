@@ -213,7 +213,6 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         vo.setTotalLikes(userPostStatistics.getTotalLikes());
         vo.setTotalComments(userPostStatistics.getTotalComments());
         return vo;
-
     }
 
 

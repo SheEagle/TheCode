@@ -1,26 +1,27 @@
-#生产环境配置
-server:
-  port: 80
+# 开发环境配置
 springdoc:
-  api-docs:
-    enabled: false
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  paths-to-match: /api/**
+  swagger-ui:
+    operations-sorter: alpha
 spring:
   mail:
-    host: smtp.163.com
-    username: javastudy111@163.com
-    password: VKQFYZMUSUZGSGEG
+    # qq邮箱的地址为smtp.163.com，直接填写即可
+    host: smtp.qq.com
+    # 你的qq邮箱
+    username: 2748719496@qq.com
+    # 注意密码是在开启smtp/pop3时自动生成的，记得保存一下，不然就找不到了
+    password: shdptvdwrgyjdegh
+    properties:
+      from: 2748719496@qq.com
   rabbitmq:
     addresses: localhost
     username: admin
     password: admin
     virtual-host: /
   datasource:
-    url: jdbc:mysql://localhost:3306/test
+    url: jdbc:mysql://localhost:3306/study
     username: root
-    password: 123456
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
   security:
     jwt:
@@ -37,9 +38,18 @@ spring:
       mail-limit: 60
     flow:
       period: 3
-      limit: 10
+      limit: 50
       block: 30
     cors:
-      origin: '*'
       credentials: false
       methods: '*'
+      origin: "*"
+  minio:
+    endpoint: 'http://localhost:9999'
+    username: 'minioadmin'
+    password: 'minioadmin'
+  weather:
+    key: 47d29ad789c640c08a537200d9070ca7
+  # 阿里云通义千问配置
+  ai:
+    key: sk-0b2bb9552610430ea5a19b50ba0c2b37

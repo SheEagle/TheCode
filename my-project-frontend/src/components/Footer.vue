@@ -15,9 +15,7 @@
       <div class="footer-copyright">
         <p>Copyright © 2024 The Code. All rights reserved.</p>
       </div>
-      <!--<div class="footer-additional-info">-->
-      <!--  <p>Building up a world of bridges</p>-->
-      <!--</div>-->
+
     </div>
   </footer>
 </template>
