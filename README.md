@@ -1,160 +1,209 @@
-
 # The Code
 
-### 基于Springboot+Vue3的STEM知识交流论坛
+**Other language versions: [中文](README_zh.md), [English](README.md),.**
 
-#### 角色包含：普通用户、管理员
+### "Break The Code" — Breaking Boundaries, Coding Dreams, Exploring the Universe of STEM with The Code.
 
-#### 功能包含：
+**The Code** is a STEM community forum designed to empower women, igniting their limitless potential on the tech stage.
+Here, every voice is heard, and every innovation is encouraged.
 
-- 注册、登录、忘记密码
+- **Safe and Inclusive**: We offer a welcoming environment where users can register, log in, share, and discuss without
+  worry.
 
-- 用户信息设置、隐私设置
+- **Personalized Experience**: Customized user settings provide a unique interaction space for each member.
 
-- 发帖、帖子列表展示、帖子分区展示、帖子搜索、查看最热帖子、删除帖子、管理员删帖
+- **Community Engagement**: Through comments, likes, and favorites, we spark community interaction. The messaging module
+  ensures you stay connected.
 
-- 发表评论、删除评论、管理员删评、点赞、收藏、我的收藏夹、消息模块
+- **Intelligent Conversations**: AI-driven real-time chat and history review make learning and interaction more dynamic
+  and convenient.
 
-- AI实时对话、查看历史对话
+Join **The Code** to collaboratively code our future, unleash potential, and create a universe of STEM knowledge
+together.
 
+## Tech Stack
 
-## 在本地运行
-- 启动Redis
+### Frontend:
 
-- 在端口9999上启动minio（可在配置文件中修改端口）
+- Vue 3
+- Element Plus
 
-- 前往前端项目目录
+### Backend:
+
+- Spring Boot 3
+- MyBatis-Plus
+- Spring Security
+- Swagger
+- RabbitMQ
+
+### Databases:
+
+- MySQL 5.7
+- Redis
+
+### Storage:
+
+- Minio
+
+### Other Technologies:
+
+- Snowflake Algorithm
+- Logback
+
+## Features
+
+![Features](img/The%20Code_%20Empowering%20Women%20in%20STEM.png)
+
+### User Authentication
+
+- **Login**
+
+- **Registration**
+
+- **Forget Password**
+
+### Profile Management
+
+- **Profile Customization**: Tailored user profiles to reflect individual identities.
+
+- **Privacy Settings**: Granular controls to safeguard user information.
+
+### Content Management & Display
+
+- **Post Creation**: Versatile content publishing to foster innovation.
+- **Thread Curation**: Smart content organization for optimized information flow.
+- **Advanced Search**: Precision-based content discovery for targeted interests.
+- **Trend Analysis**: Real-time tracking of community focal points and discussions.
+
+### Community Engagement
+
+- **Comments**: Instantaneous feedback to boost community interaction.
+- **Appreciation System**: Positive reinforcement mechanism for quality contributions.
+- **Intelligent Bookmarking**: Personalized content curation for efficient information retrieval.
+
+### Messaging & Notification System
+
+- **Alert Center**: Timely notifications to keep users informed of critical updates.
+
+### AI-Enhanced Interaction
+
+- **Live AI Chat**: Cutting-edge AI-powered real-time chat for enriched user experience.
+- **History Conversations**
+
+## Characteristics
+
+- Real-time data synchronization (WebSocket)
+- User avatar storage (Minio)
+- Rich text editor (Delta format)
+- Image upload functionality
+- Data caching strategy (Redis)
+- High-frequency operation optimization
+- Security features (Spring Security & JWT)
+- Captcha expiration control
+- Rate limiting & anti-spam measures
+- Error and exception handling
+- CORS policy
+- Multi-environment configuration
+- Comprehensive logging system
+
+## Local Setup
+
+- Start Redis
+
+- Start Minio on port 9999 (configurable)
+
+### Frontend Setup
+
+- Navigate to the frontend project directory
 
 ```bash
   cd my-project-frontend
 ```
 
-- 安装依赖
+- Install dependencies
 
 ```bash
   npm install
 ```
 
-- 启动服务器
+- Start the server
 
 ```bash
   npm run dev
 ```
 
-- 前往后端目录
+### Backend Setup
 
-```bash
-  cd my-project-backend
-```
+- Run MyProjectBackendApplication
 
-- 运行MyProjectBackendApplication类中的main方法
-## 版本要求
-**Springboot:** 3以上
+## Screenshots
 
-**MySQL:** 5.7
+### Login
 
-**需要安装Redis、RabbitMQ和minio**
-## 自定义配置项
+![img.png](img/login.png)
 
-**application-dev.yml为开发配置：**
-```
-# 配置SpringDoc工具，用于生成API文档
-springdoc:
-  # 指定生成文档的URL路径模式，这里匹配以/api开头的路径
-  paths-to-match: /api/**
-  # Swagger UI配置，按照字母顺序排序API操作
-  swagger-ui:
-    operations-sorter: alpha
+### Registration
 
-# Spring框架配置
-spring:
-  # 邮件服务器配置
-  mail:
-    # 邮件服务器的主机地址，这里配置为QQ邮箱的SMTP服务器地址
-    host: smtp.qq.com
-    # 发送邮件的邮箱账户
-    username: **********@qq.com
-    # 邮箱的SMTP授权码，用于发送邮件的验证
-    password: **********
-    properties:
-      # 发送邮件时使用的发件人地址
-      from: **********@qq.com
-  # RabbitMQ消息队列配置
-  rabbitmq:
-    # RabbitMQ服务器的地址
-    addresses: localhost
-    # RabbitMQ的用户名
-    username: *****
-    # RabbitMQ的密码
-    password: *****
-    # RabbitMQ的虚拟主机
-    virtual-host: /
-  # 数据源配置
-  datasource:
-    # 数据库连接URL
-    url: jdbc:mysql://localhost:3306/study
-    # 数据库的用户名
-    username: ****
-    # 数据库的密码
-    password: ****
-    # 数据库驱动的全类名
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  # 安全配置
-  security:
-    # JWT令牌配置
-    jwt:
-      # JWT签名密钥
-      key: 'abcdefghijklmn'
-      # 令牌的有效期，单位小时
-      expire: 72
-      # 令牌使用限制配置
-      limit:
-        # 基础令牌使用次数
-        base: 10
-        # 升级令牌使用次数
-        upgrade: 300
-        # 令牌使用频率限制，每分钟次数
-        frequency: 30
-    # 过滤器配置
-    filter:
-      # 过滤器的顺序
-      order: -100
-  # Web应用配置
-  web:
-    # 邮件验证配置
-    verify:
-      # 邮件验证的有效期，单位分钟
-      mail-limit: 60
-    # 流量控制配置
-    flow:
-      # 流量控制周期，单位秒
-      period: 3
-      # 周期内允许的最大请求次数
-      limit: 50
-      # 超出限制后的阻断时间，单位秒
-      block: 30
-    # 跨域资源共享配置
-    cors:
-      # 是否允许发送Cookie
-      credentials: false
-      # 允许的HTTP方法
-      methods: '*'
-      # 允许的来源
-      origin: "*"
-  # Minio对象存储配置
-  minio:
-    # Minio服务器的端点地址
-    endpoint: 'http://localhost:9999'
-    # Minio的用户名
-    username: '*****'
-    # Minio的密码
-    password: '*****'
-  # 天气服务API密钥
-  weather:
-    key: 47d29ad789c640c08a537200d9070ca7
-  # 阿里云通义千问AI服务配置
-  ai:
-    # 阿里云AI服务的密钥
-    key: ********
-```
-**application-prod.yml为生产环境配置，与上面类似**
+![img.png](img/register.png)
+
+### Forget Password
+
+![img.png](img/forget.png)
+
+### Forum Homepage
+
+![img.png](img/forum.png)
+
+### Browse Categories
+
+![img.png](img/classification.png)
+
+### Search Posts
+
+![img.png](img/search.png)
+
+### Create Post
+
+![img.png](img/post.png)
+
+### Create Comments
+
+![img.png](img/comment.png)
+
+### Post Details
+
+![img.png](img/detail.png)
+
+### Share Post
+
+![img.png](img/share.png)
+
+### AI Chat
+
+![img.png](img/chat.png)
+
+### AI Chat History
+
+![img.png](img/realtime.png)
+
+### My Collections
+
+![img.png](img/collection.png)
+
+### Security Settings
+
+![img.png](img/security.png)
+
+### Account Settings
+
+![img.png](img/info1.png)
+
+![img.png](img/info2.png)
+
+## Author
+
+- [@SheEagle](https://github.com/SheEagle)
+
+[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/xiru-wang-551103248/)
+[![github](https://img.shields.io/badge/GitHub-000000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/SheEagle)
+
