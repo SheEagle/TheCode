@@ -2,7 +2,7 @@
   <div style="width: 100vw;height: 100vh;overflow: hidden;display: flex">
     <div style="flex: 1">
       <el-image style="width: 100%;height: 100%" fit="cover"
-                src="https://dogefs.s3.ladydaily.com/~/source/unsplash/photo-1692607431186-e8d7837ad65b?ixid=M3w0MjI2NjN8MHwxfHRvcGljfHxhZXU2ckwtajZld3x8fHx8Mnx8MTcxODE1NTk2OXw&ixlib=rb-4.0.3&w=2560&h=1440&fmt=webp"/>
+                src="/src/assets/cover.jpg"/>
     </div>
     <div class="welcome-title">
       <div style="font-family: Arial, sans-serif; font-size: 40px; font-weight: bold">欢迎来到The Code</div>
